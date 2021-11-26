@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rafapatino01.github.io/nutriplanner/schemas/plato-schema.json",
+  "title": "Plato",
+  "description": "Entrada de platillo",
+  "type": "object",
+  "properties": {
+    "recipeName": {
+      "description": "Nombre del platillo",
+      "type": "string"
+    },
+    "time": {
+      "description": "Tiempo para cocinar en minutos",
+      "type": "number"
+    },
+    "servings": {
+      "description": "No. porciones",
+      "type": "integer"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ingredientName": {
+            "description": "Nombre del ingrediente",
+            "type": "string"
+          },
+          "size": {
+            "description": "cantidades para los ingredientes con unidad",
+            "$ref": "size-schema.json"
+          }
+        }
+      }
+    },
+    "tags": {
+      "description": "Categorias especiales para filtrar que no se incluyan en los ingredientes",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  }
+}

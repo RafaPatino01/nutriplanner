@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://rafapatino01.github.io/nutriplanner/schemas/size-schema.json",
+    "title": "size",
+    "description": "Esquema de cantidades para ingredientes",
+    "properties": {
+        "amount": {
+            "type": "number"
+        },
+        "unit": {
+            "description": "Unidades comunes para cocina de https://es.wikibooks.org/s/1tx",
+            "enum": [
+                "gramo",
+                "onza",
+                "litro",
+                "mililitro",
+                "taza",
+                "cucharada",
+                "cucharadita"
+            ]
+        }
+    }
+}
