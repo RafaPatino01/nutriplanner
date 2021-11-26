@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="../css/admin.css">
     </head>
-<body class="bg-success">
+<body class="bg-success" id="admin_file">
     <main>
         <div class="d-flex flex-column flex-shrink-0 p-3 text-dark bg-light" style="width: 280px;">
           <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
@@ -63,14 +63,16 @@
               <strong>ADMIN</strong>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-              <li><a class="dropdown-item" href="login_admin.html">Sign out</a></li>
+              <li><a class="dropdown-item" id="LogOutBtn">Sign out</a></li>
             </ul>
           </div>
         </div>
       
         <div class="b-example-divider"></div>
     </main>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</body>
+    <script src="../scripts/index.js" type="module"></script>
+    <script src="../scripts/auth.js" type="module"></script>
+  </body>
 </html>
