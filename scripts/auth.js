@@ -1,5 +1,5 @@
 import app from "./index.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
 import { getFirestore, collection, addDoc, getDocs, getDoc, onSnapshot, deleteDoc, doc, updateDoc} from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js"
 
 const auth = getAuth(app);
@@ -18,7 +18,6 @@ onGetAdmin_users((querySnapshot) => {
     // is admin file
     const admin_file = document.getElementById("admin_file");
     
-
     //Login event listener
     const LoginButton = document.getElementById("LogBtn");
     if(LoginButton){
@@ -87,10 +86,27 @@ onGetAdmin_users((querySnapshot) => {
 
         } else {
             console.log("User is signed out");
+            if(admin_file){
+                window.location.replace("login.html");
+            }
         }
     });
 
-
 });
 
+function signUp(pEmail, pPass){
+    createUserWithEmailAndPassword(auth, pEmail, pPass)
+    .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    alert("Usuario correctamente registrado");
+    window.location.replace("../index.html");
+    })
+    .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    });
+}
+
+export { signUp };
 
