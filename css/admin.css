@@ -91,3 +91,11 @@ body {
   .nav-item {
     cursor: pointer;
   }
+
+  .col-form-label {
+    font-weight: 600;
+  }
+
+  .bg-gray {
+    background-color: #f0f0f0;
+  }
