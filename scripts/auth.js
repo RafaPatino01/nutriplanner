@@ -51,6 +51,7 @@ onGetAdmin_users((querySnapshot) => {
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
+            alert("Usuario / contraseña incorrectos");
         });
     }
 
@@ -99,12 +100,13 @@ function signUp(pEmail, pPass){
     .then((userCredential) => {
     // Signed in 
     const user = userCredential.user;
-    alert("Usuario correctamente registrado");
+    alert("Usuario registrado correctamente");
     window.location.replace("../index.html");
     })
     .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
+    alert(errorCode);
     });
 }
 
