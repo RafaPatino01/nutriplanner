@@ -1,13 +1,70 @@
+// admin.js
+// dynamic content
+import { app } from "./index.js";
+// firebase
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+
+//get origin url
+const origin = window.location.origin;
+
 //Menu event listeners
 const addBtn = document.getElementById("addBtn");
 const editBtn = document.getElementById("editBtn");
 const statsBtn = document.getElementById("statsBtn");
+const signoutButton = document.getElementById("LogOutBtn");
+
+// funcs
+// return user to login
+const kickUser = () => {
+    const origin = window.location.origin;
+    window.location.assign(origin + '/pages/login.html');
+}
+
+// Behav
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        // User is signed in
+        // check for admin
+        const uid = user.uid;
+        const querySnapshot = await getDocs(query(collection(db, "admin_users"), where("u_id", "==", uid)));
+        if (!(querySnapshot.empty)) {
+            console.log("Admin account");
+        } else {
+            console.log("Invalid account");
+            window.location.assign(origin);
+        }
+    } else {
+        // no user
+        console.log("No user");
+        // redirect home
+        window.location.assign(origin);
+    }
+});
+
+signoutButton.addEventListener("click", () => {
+    signOut(auth).
+    then(() => {
+        // sign-out successfull
+        // redirect to home
+        console.log("Bye bye");
+        window.location.assign(origin);
+    })
+    .catch((error) => {
+        // an error happened
+        console.error(error);
+        alert(error.message);
+    });
+});
 
 addBtn.addEventListener("click", showAdd);
 editBtn.addEventListener("click", showEdit);
 statsBtn.addEventListener("click", showStats);
 
-function showAdd(){
+function showAdd() {
     addBtn.classList.add("active");
     editBtn.classList.remove("active");
     statsBtn.classList.remove("active");
@@ -107,7 +164,7 @@ function showAdd(){
     });
 }
 
-function showEdit(){
+function showEdit() {
     editBtn.classList.add("active");
     addBtn.classList.remove("active");
     statsBtn.classList.remove("active");
@@ -121,7 +178,7 @@ function showEdit(){
     `;
 }
 
-function showStats(){
+function showStats() {
     statsBtn.classList.add("active");
     editBtn.classList.remove("active");
     addBtn.classList.remove("active");
