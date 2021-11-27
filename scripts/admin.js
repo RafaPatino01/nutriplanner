@@ -116,7 +116,6 @@ addBtn.addEventListener("click", (e) => {
                 .addEventListener("click", () => {
                     ingredientElement.remove();
                 });
-
                 // insert into doc
                 document.getElementById("ingredientList").append(ingredientElement);
             });
@@ -150,3 +149,9 @@ function showStats() {
     </div>
     `;
 }
+
+// start with add enabled
+window.addEventListener("DOMContentLoaded", () => {
+    addBtn.click();
+    addBtn.blur();
+});
