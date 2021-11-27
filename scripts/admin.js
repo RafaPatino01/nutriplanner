@@ -13,6 +13,11 @@ const addBtn = document.getElementById("addBtn");
 const editBtn = document.getElementById("editBtn");
 const statsBtn = document.getElementById("statsBtn");
 const signoutButton = document.getElementById("LogOutBtn");
+const contentArea = document.getElementById("content");
+
+// helper objects
+const XMLS = new XMLSerializer();
+const parser = new DOMParser();
 
 // funcs
 // return user to login
@@ -47,122 +52,76 @@ onAuthStateChanged(auth, async (user) => {
 
 signoutButton.addEventListener("click", () => {
     signOut(auth).
-    then(() => {
-        // sign-out successfull
-        // redirect to home
-        console.log("Bye bye");
-        window.location.assign(origin);
-    })
-    .catch((error) => {
-        // an error happened
-        console.error(error);
-        alert(error.message);
-    });
+        then(() => {
+            // sign-out successfull
+            // redirect to home
+            console.log("admin signed out");
+            window.location.assign(origin);
+        })
+        .catch((error) => {
+            // an error happened
+            console.error(error);
+            alert(error.message);
+        });
 });
 
-addBtn.addEventListener("click", showAdd);
+// addBtn.addEventListener("click", showAdd);
 editBtn.addEventListener("click", showEdit);
 statsBtn.addEventListener("click", showStats);
 
-function showAdd() {
+addBtn.addEventListener("click", (e) => {
     addBtn.classList.add("active");
     editBtn.classList.remove("active");
     statsBtn.classList.remove("active");
-    content.innerHTML = `
-    <div class="w-100 bg-light p-5 rounded-3">
-    <div class="row">
-        <h1>Añadir receta</h1>
-        <br>
-        <p class="text-small">Añade nuevas recetas para que estén disponibles en la plataforma</p>
-        <br>
-        <form class="p-5">
-        <div class="row mb-3">
-            <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
-            <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputName">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="inputDescr" class="col-sm-2 col-form-label">Descripción</label>
-            <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputDescr">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="inputDescr" class="col-sm-2 col-form-label">Precio</label>
-            <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputDescr">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="formFile" class="col-sm-2 col-form-label">Imagen</label>
-            <div class="col-sm-10">
-            <input class="form-control" type="file" id="inputFile">
-            </div>
-        </div>
-        <fieldset class="row mb-3">
-            <legend class="col-form-label col-sm-2 pt-0">Tipo</legend>
-            <div class="col-sm-10">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gridRadios" id="normal" value="option1" checked>
-                <label class="form-check-label" for="gridRadios1">
-                Normal
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gridRadios" id="vegetarian" value="option2">
-                <label class="form-check-label" for="gridRadios2">
-                Vegetariano
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gridRadios" id="vegan" value="option3">
-                <label class="form-check-label" for="gridRadios3">
-                Vegano
-                </label>
-            </div>
-            </div>
-        </fieldset>
-        <hr>
-        <div class="row mb-3">
-            <label for="inputIngredient" class="col-sm-2 col-form-label">Añadir ingredientes</label>
-            <div class="col-sm-5">
-            <input type="text" class="form-control" id="inputIngredient">
-            </div>
-            <div class="col-sm-5">
-            <button type="button" class="btn btn-primary" id="ingredientBtn">Agregar</button>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-5 p-3">
-                <div class="row" id="ingredientList">
-                </div>
-            </div>
-        </div>
 
-        <button type="submit" class="mt-3 btn btn-lg btn-primary">Añadir receta</button>
-        </form>
-    </div>
-    </div>`;
+    fetch("../common/add_plato.html")
+        .then(response => response.text())
+        .then((data) => {
+            // // se pueden modificar los elementos html
+            // // antes de agregarlos con un parser
+            // const htmlDoc = parser.parseFromString(data, "text/html");
+            // // do stuff ..
+            // contentArea.innerHTML = XMLS.parseFromString(htmlDoc);
+            contentArea.innerHTML = data;
+        })
+        .catch((error) => {
+            alert(error.message);
+        })
+        .then(() => {
 
-    //Form ingredients
-    let ingredientBtn = document.getElementById("ingredientBtn");
-    let value = "";
-    let n_ingredient = 0;
-    ingredientBtn.addEventListener("click", function addIngredients(){
-        value = document.getElementById("inputIngredient").value;
+            const ingredientBtn = document.getElementById("ingredientBtn");
+            ingredientBtn.addEventListener("click", () => {
+                const value = document.getElementById("inputIngredient").value;
 
-        document.getElementById("ingredientList").innerHTML += `
-        <div class="row mb-1" id="ingredient`+n_ingredient.toString()+`">
-        <div class="col-10 border bg-white rounded">`+value+`</div>
-        <div class="col-2 text-center"><a class="btn bg-gray" onclick="document.getElementById('ingredient'+`+n_ingredient.toString()+`).innerHTML = '';">ⓧ</a></div>
-        </div>
-        `;
+                // ingredient entries
+                // ingredient class to fetch all later
+                // could also be read from ajax
+                let ingredientDoc = parser.parseFromString(`
+                    <div class="ingredient-entry row mb-1" data-value=${value}>
+                        <div class="col-10 border bg-white rounded">
+                            ${value}
+                        </div>
+                        <div class="col-2 text-center">
+                            <a class="btn-delete btn btn-gray" aria-label="Delete">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    `,
+                    "text/html");
+                // get only div
+                let ingredientElement = ingredientDoc.body.firstElementChild;
+                // delete self
+                ingredientElement.querySelector(".btn-delete")
+                .addEventListener("click", () => {
+                    ingredientElement.remove();
+                });
 
-        n_ingredient++;
-    });
-}
+                // insert into doc
+                document.getElementById("ingredientList").append(ingredientElement);
+            });
+        });
+});
 
 function showEdit() {
     editBtn.classList.add("active");
