@@ -9,6 +9,10 @@
       "description": "Nombre del platillo",
       "type": "string"
     },
+    "thumbnail": {
+      "description": "Dirección de la imagen en Firebase Cloud Storage",
+      "type": "string"
+    },
     "time": {
       "description": "Tiempo para cocinar en minutos",
       "type": "number"
