@@ -15,8 +15,7 @@ onAuthStateChanged(auth, (user) => {
         // User is signed in
         console.log("user signed in");
         // redirect to home
-        const origin = window.location.origin;
-        window.location.assign(origin);
+        window.location.assign("../");
     }
 });
 

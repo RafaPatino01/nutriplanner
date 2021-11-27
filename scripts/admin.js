@@ -5,9 +5,6 @@ import { app } from "./index.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
 
-//get origin url
-const origin = window.location.origin;
-
 //Menu event listeners
 const addBtn = document.getElementById("addBtn");
 const editBtn = document.getElementById("editBtn");
@@ -18,13 +15,6 @@ const contentArea = document.getElementById("content");
 // helper objects
 const XMLS = new XMLSerializer();
 const parser = new DOMParser();
-
-// funcs
-// return user to login
-const kickUser = () => {
-    const origin = window.location.origin;
-    window.location.assign(origin + '/pages/login.html');
-}
 
 // Behav
 const auth = getAuth(app);
@@ -40,13 +30,13 @@ onAuthStateChanged(auth, async (user) => {
             console.log("Admin account");
         } else {
             console.log("Invalid account");
-            window.location.assign(origin);
+            window.location.assign("../");
         }
     } else {
         // no user
         console.log("No user");
         // redirect home
-        window.location.assign(origin);
+        window.location.assign("../");
     }
 });
 
@@ -56,7 +46,7 @@ signoutButton.addEventListener("click", () => {
             // sign-out successfull
             // redirect to home
             console.log("admin signed out");
-            window.location.assign(origin);
+            window.location.assign("../");
         })
         .catch((error) => {
             // an error happened
