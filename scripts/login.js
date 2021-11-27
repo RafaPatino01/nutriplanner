@@ -1,6 +1,6 @@
 import { app } from "./index.js";
 // firebase
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
 
 const auth = getAuth(app);
 //register event listener
@@ -55,7 +55,7 @@ function registerForm() {
     <h3 class="w-100 text-center">Regístrate</h3>
     <div class="row px-5 m-3">
         <label>Nombre</label>
-        <input type="text" class="form-control">
+        <input type="text" class="form-control" id="register_name">
     </div>
     <div class="row px-5 m-3">
         <label>Email</label>
@@ -81,6 +81,7 @@ function registerForm() {
 }
 
 function registerUser() {
+    let name = document.getElementById("register_name").value;
     let email = document.getElementById("register_email").value;
     let pass0 = document.getElementById("register_pass0").value;
     let pass1 = document.getElementById("register_pass1").value;
@@ -102,8 +103,12 @@ function registerUser() {
     createUserWithEmailAndPassword(auth, email, pass0)
     .then((userCredential) => {
         // signed in
-        const uid = userCredential.user.uid;
-        console.log("User created: " + uid);
+        const user = userCredential.user;
+        console.log("User created: " + user.uid);
+        // add name to user properties
+        updateProfile(user, {
+            displayName: name
+        })
     })
     .catch((error) =>{
         console.error(error);
