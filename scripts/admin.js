@@ -13,7 +13,6 @@ const signoutButton = document.getElementById("LogOutBtn");
 const contentArea = document.getElementById("content");
 
 // helper objects
-const XMLS = new XMLSerializer();
 const parser = new DOMParser();
 
 // Behav
@@ -41,75 +40,73 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 signoutButton.addEventListener("click", () => {
-    signOut(auth).
-        then(() => {
-            // sign-out successfull
-            // redirect to home
-            console.log("admin signed out");
-            window.location.assign("../");
-        })
-        .catch((error) => {
-            // an error happened
-            console.error(error);
-            alert(error.message);
-        });
+    signOut(auth)
+    .then(() => {
+        // sign-out successfull
+        // redirect to home
+        console.log("admin signed out");
+        window.location.assign("../");
+    })
+    .catch((error) => {
+        // an error happened
+        console.error(error);
+        alert(error.message);
+    });
 });
 
 // addBtn.addEventListener("click", showAdd);
 editBtn.addEventListener("click", showEdit);
 statsBtn.addEventListener("click", showStats);
 
-addBtn.addEventListener("click", (e) => {
+addBtn.addEventListener("click", async (e) => {
     addBtn.classList.add("active");
     editBtn.classList.remove("active");
     statsBtn.classList.remove("active");
 
-    fetch("../common/add_plato.html")
-        .then(response => response.text())
-        .then((data) => {
-            // // se pueden modificar los elementos html
-            // // antes de agregarlos con un parser
-            // const htmlDoc = parser.parseFromString(data, "text/html");
-            // // do stuff ..
-            // contentArea.innerHTML = XMLS.parseFromString(htmlDoc);
-            contentArea.innerHTML = data;
-        })
-        .catch((error) => {
-            alert(error.message);
-        })
-        .then(() => {
+    await fetch("../common/add_plato.html")
+    .then(response => response.text())
+    .then((data) => {
+        // // se pueden modificar los elementos html
+        // // antes de agregarlos con un parser
+        // const htmlDoc = parser.parseFromString(data, "text/html");
+        // // do stuff ..
+        // contentArea.innerHTML = XMLS.parseFromString(htmlDoc);
+        contentArea.innerHTML = data;
+    })
+    .catch((error) => {
+        alert(error.message);
+    });
 
-            const ingredientBtn = document.getElementById("ingredientBtn");
-            ingredientBtn.addEventListener("click", () => {
-                const value = document.getElementById("inputIngredient").value;
+    const ingredientBtn = document.getElementById("ingredientBtn");
+    ingredientBtn.addEventListener("click", () => {
+        const value = document.getElementById("inputIngredient").value;
 
-                // ingredient entries
-                // ingredient class to fetch all later
-                // could also be read from ajax
-                let ingredientDoc = parser.parseFromString(`
-                    <div class="ingredient-entry row mb-1" data-value=${value}>
-                        <div class="col-10 border bg-white rounded">
-                            ${value}
-                        </div>
-                        <div class="col-2 text-center">
-                            <a class="btn-delete btn btn-gray" aria-label="Delete">
-                                <i class="bi bi-x-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                    `,
-                    "text/html");
-                // get only div
-                let ingredientElement = ingredientDoc.body.firstElementChild;
-                // delete self
-                ingredientElement.querySelector(".btn-delete")
-                .addEventListener("click", () => {
-                    ingredientElement.remove();
-                });
-                // insert into doc
-                document.getElementById("ingredientList").append(ingredientElement);
-            });
+        // ingredient entries
+        // ingredient class to fetch all later
+        // could also be read from ajax
+        let ingredientDoc = parser.parseFromString(`
+            <div class="ingredient-entry row mb-1" data-value=${value}>
+                <div class="col-10 border bg-white rounded">
+                    ${value}
+                </div>
+                <div class="col-2 text-center">
+                    <a class="btn-delete btn btn-gray" aria-label="Delete">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                </div>
+            </div>
+            `,
+            "text/html");
+        // get only div
+        let ingredientElement = ingredientDoc.body.firstElementChild;
+        // delete self
+        ingredientElement.querySelector(".btn-delete")
+        .addEventListener("click", () => {
+            ingredientElement.remove();
         });
+        // insert into doc
+        document.getElementById("ingredientList").append(ingredientElement);
+    });
 });
 
 function showEdit() {
