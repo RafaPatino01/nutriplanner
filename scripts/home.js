@@ -24,6 +24,7 @@ signOutButton.addEventListener("click", (e) => {
     })
     .catch((error) => {
         // an error happened
+        alert(error.message);
         console.error(error);
     })
 });

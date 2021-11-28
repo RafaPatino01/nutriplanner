@@ -109,7 +109,7 @@ function registerUser() {
             displayName: name
         })
     })
-    .catch((error) =>{
+    .catch((error) => {
         console.error(error);
         alert(error.message);
     });
