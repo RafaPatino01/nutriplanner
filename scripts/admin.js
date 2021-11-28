@@ -5,6 +5,10 @@ import { app } from "./index.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
 
+// json schema validator
+const Ajv = window.ajv2019;
+const ajv = new Ajv ();
+
 //Menu event listeners
 const addBtn = document.getElementById("addBtn");
 const editBtn = document.getElementById("editBtn");
@@ -137,8 +141,27 @@ function showStats() {
     `;
 }
 
-// start with add enabled
-window.addEventListener("DOMContentLoaded", () => {
+// onload content
+window.addEventListener("DOMContentLoaded", async () => {
+    // start with add enabled
     addBtn.click();
     addBtn.blur();
+
+    // setup ajv
+    var validate;
+    await fetch('../schemas/size-schema.json')
+    .then(response => response.json())
+    .then(sizeSchema => {
+        ajv.addSchema(sizeSchema);
+        return fetch('../schemas/plato-schema.json');
+    })
+    .then(response => response.json())
+    .then(platoSchema => {
+        validate = ajv.compile(platoSchema);
+    })
+    .catch(error => {
+        alert(error);
+    });
+
+    
 });
