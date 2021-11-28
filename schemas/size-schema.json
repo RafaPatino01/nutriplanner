@@ -1,8 +1,9 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://rafapatino01.github.io/nutriplanner/schemas/size-schema.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "/schemas/size",
     "title": "size",
     "description": "Esquema de cantidades para ingredientes",
+    "type": "object",
     "properties": {
         "amount": {
             "type": "number"
@@ -19,5 +20,6 @@
                 "cucharadita"
             ]
         }
-    }
+    },
+    "required": ["amount", "unit"]
 }

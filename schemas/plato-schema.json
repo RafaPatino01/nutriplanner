@@ -1,6 +1,6 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://rafapatino01.github.io/nutriplanner/schemas/plato-schema.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "/schemas/plato",
   "title": "Plato",
   "description": "Entrada de platillo",
   "type": "object",
@@ -32,7 +32,7 @@
           },
           "size": {
             "description": "cantidades para los ingredientes con unidad",
-            "$ref": "size-schema.json"
+            "$ref": "/schemas/size"
           }
         }
       }
@@ -45,5 +45,6 @@
       },
       "uniqueItems": true
     }
-  }
+  },
+  "required": ["recipeName"]
 }
