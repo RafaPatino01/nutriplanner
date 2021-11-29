@@ -34,7 +34,8 @@
             "description": "cantidades para los ingredientes con unidad",
             "$ref": "/schemas/size"
           }
-        }
+        },
+        "required": ["ingredientName", "size"]
       }
     },
     "tags": {
