@@ -19,9 +19,9 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label for="inputDescr" class="col-sm-2 col-form-label">Precio</label>
+                    <label for="inputPrecio" class="col-sm-2 col-form-label">Precio</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputDescr">
+                        <input type="text" class="form-control" id="inputPrecio">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -58,22 +58,25 @@
                 <hr>
                 <div class="row mb-3">
                     <label for="inputIngredient" class="col-sm-2 col-form-label">Añadir ingredientes</label>
-                    <div class="col-sm-5">
-                        <input type="text" class="form-control" id="inputIngredient">
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="inputIngredient" placeholder="Nombre Ingrediente">
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="inputCantidad" placeholder="Cantidad">
+                    </div>
+                    <div class="col-sm-2">
                         <button type="button" class="btn btn-primary" id="ingredientBtn">Agregar</button>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-sm-2 col-form-label"></label>
-                    <div class="col-sm-5 p-3">
+                    <div class="col-sm-6 p-3">
                         <div class="row" id="ingredientList">
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="mt-3 btn btn-lg btn-primary">Añadir receta</button>
+                <button id="btnReceta" class="mt-3 btn btn-lg btn-primary">Añadir receta</button>
             </form>
         </div>
     </div>

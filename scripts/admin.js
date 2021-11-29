@@ -83,18 +83,22 @@ addBtn.addEventListener("click", async (e) => {
 
     const ingredientBtn = document.getElementById("ingredientBtn");
     ingredientBtn.addEventListener("click", () => {
-        const value = document.getElementById("inputIngredient").value;
+        const name = document.getElementById("inputIngredient").value;
+        const cantidad = document.getElementById("inputCantidad").value;
 
         // ingredient entries
         // ingredient class to fetch all later
         // could also be read from ajax
         let ingredientDoc = parser.parseFromString(`
-            <div class="ingredient-entry row mb-1" data-value=${value}>
-                <div class="col-10 border bg-white rounded">
-                    ${value}
+            <div class="ingredient-entry row mb-1" ingredient-name=${name} ingredient-cantidad=${cantidad}>
+                <div class="col-6 border bg-white rounded-start">
+                    ${name}
+                </div>
+                <div class="col-4 border bg-white rounded-end" >
+                    ${cantidad}
                 </div>
                 <div class="col-2 text-center">
-                    <a class="btn-delete btn btn-gray" aria-label="Delete">
+                    <a class="btn-delete btn bg-gray" aria-label="Delete">
                         <i class="bi bi-x-circle"></i>
                     </a>
                 </div>
@@ -110,6 +114,21 @@ addBtn.addEventListener("click", async (e) => {
         });
         // insert into doc
         document.getElementById("ingredientList").append(ingredientElement);
+
+        //Clear form
+        document.getElementById("inputIngredient").value = "";
+        document.getElementById("inputCantidad").value = "";
+    });
+
+    const btnReceta = document.getElementById("btnReceta");
+    btnReceta.addEventListener("click", () => {
+        // Get ingredients
+        let ingredientes = document.getElementsByClassName("ingredient-entry");
+        let ingredientsList = []; // [name, cantidad]
+        for(let i = 0; i<ingredientes.length; i++){
+            ingredientsList.push([ingredientes[i].getAttribute("ingredient-name"), ingredientes[i].getAttribute("ingredient-cantidad")]);
+        }
+        //... hacer algo con ingredientsList
     });
 });
 
