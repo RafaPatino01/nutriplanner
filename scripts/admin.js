@@ -7,7 +7,11 @@ import { getFirestore, collection, query, where, getDocs } from "https://www.gst
 
 // json schema validator
 const Ajv = window.ajv2019;
-const ajv = new Ajv ();
+const ajv = new Ajv ({loadSchema : async (uri) => {
+    const res = await request.json(uri);
+    if (res.statusCode >= 400) throw new Error("Loading error: " + res.StatusCode);
+    return res.body;
+}});
 
 //Menu event listeners
 const addBtn = document.getElementById("addBtn");
@@ -42,6 +46,31 @@ onAuthStateChanged(auth, async (user) => {
         window.location.assign("../");
     }
 });
+
+// onload content
+var validate;
+window.addEventListener("DOMContentLoaded", async () => {
+    // start with add enabled
+    addBtn.click();
+    addBtn.blur();
+
+    // setup ajv
+    await fetch('../schemas/size-schema.json')
+    .then(response => response.json())
+    .then(sizeSchema => {
+        ajv.addSchema(sizeSchema);
+        return fetch('../schemas/plato-schema.json');
+    })
+    .then(response => response.json())
+    .then(platoSchema => {
+        validate = ajv.compile(platoSchema);
+    })
+    .catch(error => {
+        alert(error);
+        console.error(error);
+    });
+});
+
 
 signoutButton.addEventListener("click", () => {
     signOut(auth)
@@ -83,19 +112,23 @@ addBtn.addEventListener("click", async (e) => {
 
     const ingredientBtn = document.getElementById("ingredientBtn");
     ingredientBtn.addEventListener("click", () => {
-        const name = document.getElementById("inputIngredient").value;
-        const cantidad = document.getElementById("inputCantidad").value;
+        const ingredientName = document.getElementById("inputIngredientName").value;
+        const ingredientQty = document.getElementById("inputIngredientQty").value;
+        const ingredientUnit = document.getElementById("inputIngredientSelect").value;
 
         // ingredient entries
         // ingredient class to fetch all later
         // could also be read from ajax
         let ingredientDoc = parser.parseFromString(`
-            <div class="ingredient-entry row mb-1" ingredient-name="${name}" ingredient-cantidad="${cantidad}">
-                <div class="col-6 border bg-white rounded-start">
-                    ${name}
+            <div class="ingredient-entry row mb-1" data-ingredient-name=${ingredientName} data-ingredient-qty=${ingredientQty} data-ingredient-unit=${ingredientUnit}>
+                <div class="col-6 border bg-white rounded">
+                    ${ingredientName}
                 </div>
-                <div class="col-4 border bg-white rounded-end" >
-                    ${cantidad}
+                <div class="col-2 border bg-white rounded-end" >
+                    ${ingredientQty}
+                </div>
+                <div class="col-2 border bg-white rounded" >
+                    ${ingredientUnit}
                 </div>
                 <div class="col-2 text-center">
                     <a class="btn-delete btn bg-gray" aria-label="Delete">
@@ -106,7 +139,7 @@ addBtn.addEventListener("click", async (e) => {
             `,
             "text/html");
         // get only div
-        let ingredientElement = ingredientDoc.body.firstElementChild;
+        const ingredientElement = ingredientDoc.body.firstElementChild;
         // delete self
         ingredientElement.querySelector(".btn-delete")
         .addEventListener("click", () => {
@@ -114,60 +147,63 @@ addBtn.addEventListener("click", async (e) => {
         });
         // insert into doc
         document.getElementById("ingredientList").append(ingredientElement);
-
-        //Clear form
-        document.getElementById("inputIngredient").value = "";
-        document.getElementById("inputCantidad").value = "";
     });
     
     
     const btnReceta = document.getElementById("btnReceta");
     btnReceta.addEventListener("click", () => {
         // Get ingredients
-        let ingredientes = document.getElementsByClassName("ingredient-entry");
-        let ingredientsList = []; // [name, size]
+        const ingredientes = Array.from(document.getElementsByClassName("ingredient-entry"));
+        const ingredientsList = []; // [name, size]
 
-        if(ingredientes.length > 0){
-             for(let i = 0; i<ingredientes.length; i++){
-                 ingredientsList.push([ingredientes[i].getAttribute("ingredient-name"), ingredientes[i].getAttribute("ingredient-cantidad")]);
-            }
-        }
-        else{
-            ingredientsList.push(["a",0]);
-        }
+        ingredientes.forEach((element) => {
+            ingredientsList.push({
+                ingredientName: element.dataset.ingredientName,
+                size: {
+                    amount: element.dataset.ingredientQty,
+                    unit: element.dataset.ingredientUnit
+                }
+            });
+        });
         
         // Get form
-        let name = document.getElementById("inputName").value;
-        let descr = document.getElementById("inputDescr").value;
-        let servings = document.getElementById("inputServings").value;
-        let time = document.getElementById("inputTime").value;
-        let precio = document.getElementById("inputPrecio").value;
+        const inputName = document.getElementById("inputName").value;
+        const [inputImg] = document.getElementById("inputImg").files;
+        var imgPath = "";
+        if (inputImg) {
+            imgPath = URL.createObjectURL(inputImg);
+        }
+        const inputTime = document.getElementById("inputTime").value;
+        const inputServings = document.getElementById("inputServings").value;
+        const inputDescr = document.getElementById("inputDescr").value;
         
         // Get tag
         let tags = [];
-        if(document.getElementById("is_vegetarian").checked){
+        if(document.getElementById("vegetarian").checked){
             tags.push("vegetarian");
-        } else if(document.getElementById("is_vegan").checked){
+        } 
+        if(document.getElementById("vegan").checked){
             tags.push("vegan");
-        } else if(document.getElementById("is_breakfast").checked){
+        } 
+        if(document.getElementById("breakfast").checked){
             tags.push("breakfast");
-        } else if(document.getElementById("is_lunch").checked){
+        } 
+        if(document.getElementById("lunch").checked){
             tags.push("lunch");
-        } else if(document.getElementById("is_dinner").checked){
+        } 
+        if(document.getElementById("dinner").checked){
             tags.push("dinner");
-        } else {
-            tags.push("");
         }
 
-        document.getElementById("test-output").innerHTML += 
+        document.getElementById("test-output").innerHTML = 
         `
-        <p>${name}</p>
-        <p>${descr}</p>
-        <p>${servings}</p>
-        <p>${time}</p>
-        <p>${precio}</p>
-        <p>${tags}</p>
-        <p>${ingredientsList}</p>
+        <p>Name: ${inputName}</p>
+        <p>img: ${imgPath}</p>
+        <p>Time: ${inputTime}</p>
+        <p>Servings: ${inputServings}</p>
+        <p>Descr: ${inputDescr}</p>
+        <p>Ingredients: ${ingredientsList}</p>
+        <p>Tags: ${tags}</p>
         `;
     });
 
@@ -177,7 +213,7 @@ function showEdit() {
     editBtn.classList.add("active");
     addBtn.classList.remove("active");
     statsBtn.classList.remove("active");
-    content.innerHTML = `
+    contentArea.innerHTML = `
     <div class="w-100 bg-light p-5 rounded-3" style="height: 100%;">
     <div class="row">
         <h1>Editar receta</h1>
@@ -191,7 +227,7 @@ function showStats() {
     statsBtn.classList.add("active");
     editBtn.classList.remove("active");
     addBtn.classList.remove("active");
-    content.innerHTML = `
+    contentArea.innerHTML = `
     <div class="w-100 bg-light p-5 rounded-3" style="height: 100%;">
     <div class="row">
         <h1>Estadísticas</h1>
@@ -200,28 +236,3 @@ function showStats() {
     </div>
     `;
 }
-
-// onload content
-window.addEventListener("DOMContentLoaded", async () => {
-    // start with add enabled
-    addBtn.click();
-    addBtn.blur();
-
-    // setup ajv
-    var validate;
-    await fetch('../schemas/size-schema.json')
-    .then(response => response.json())
-    .then(sizeSchema => {
-        ajv.addSchema(sizeSchema);
-        return fetch('../schemas/plato-schema.json');
-    })
-    .then(response => response.json())
-    .then(platoSchema => {
-        validate = ajv.compile(platoSchema);
-    })
-    .catch(error => {
-        alert(error);
-    });
-
-    
-});

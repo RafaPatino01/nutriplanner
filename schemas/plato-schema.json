@@ -32,6 +32,8 @@
     "ingredients": {
       "type": "array",
       "items": {
+        "$id": "/schemas/ingredient",
+        "title": "ingredient",
         "type": "object",
         "properties": {
           "ingredientName": {

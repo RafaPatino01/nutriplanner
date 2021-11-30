@@ -11,13 +11,13 @@
         "unit": {
             "description": "Unidades comunes para cocina de https://es.wikibooks.org/s/1tx",
             "enum": [
-                "gramo",
-                "onza",
-                "litro",
-                "mililitro",
+                "g",
+                "oz",
+                "L",
+                "ml",
                 "taza",
-                "cucharada",
-                "cucharadita"
+                "cda",
+                "cdta"
             ]
         }
     },
