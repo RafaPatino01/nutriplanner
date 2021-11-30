@@ -90,7 +90,7 @@ addBtn.addEventListener("click", async (e) => {
         // ingredient class to fetch all later
         // could also be read from ajax
         let ingredientDoc = parser.parseFromString(`
-            <div class="ingredient-entry row mb-1" ingredient-name=${name} ingredient-cantidad=${cantidad}>
+            <div class="ingredient-entry row mb-1" ingredient-name="${name}" ingredient-cantidad="${cantidad}">
                 <div class="col-6 border bg-white rounded-start">
                     ${name}
                 </div>
@@ -119,17 +119,58 @@ addBtn.addEventListener("click", async (e) => {
         document.getElementById("inputIngredient").value = "";
         document.getElementById("inputCantidad").value = "";
     });
-
+    
+    
     const btnReceta = document.getElementById("btnReceta");
     btnReceta.addEventListener("click", () => {
         // Get ingredients
         let ingredientes = document.getElementsByClassName("ingredient-entry");
-        let ingredientsList = []; // [name, cantidad]
-        for(let i = 0; i<ingredientes.length; i++){
-            ingredientsList.push([ingredientes[i].getAttribute("ingredient-name"), ingredientes[i].getAttribute("ingredient-cantidad")]);
+        let ingredientsList = []; // [name, size]
+
+        if(ingredientes.length > 0){
+             for(let i = 0; i<ingredientes.length; i++){
+                 ingredientsList.push([ingredientes[i].getAttribute("ingredient-name"), ingredientes[i].getAttribute("ingredient-cantidad")]);
+            }
         }
-        //... hacer algo con ingredientsList
+        else{
+            ingredientsList.push(["a",0]);
+        }
+        
+        // Get form
+        let name = document.getElementById("inputName").value;
+        let descr = document.getElementById("inputDescr").value;
+        let servings = document.getElementById("inputServings").value;
+        let time = document.getElementById("inputTime").value;
+        let precio = document.getElementById("inputPrecio").value;
+        
+        // Get tag
+        let tags = [];
+        if(document.getElementById("is_vegetarian").checked){
+            tags.push("vegetarian");
+        } else if(document.getElementById("is_vegan").checked){
+            tags.push("vegan");
+        } else if(document.getElementById("is_breakfast").checked){
+            tags.push("breakfast");
+        } else if(document.getElementById("is_lunch").checked){
+            tags.push("lunch");
+        } else if(document.getElementById("is_dinner").checked){
+            tags.push("dinner");
+        } else {
+            tags.push("");
+        }
+
+        document.getElementById("test-output").innerHTML += 
+        `
+        <p>${name}</p>
+        <p>${descr}</p>
+        <p>${servings}</p>
+        <p>${time}</p>
+        <p>${precio}</p>
+        <p>${tags}</p>
+        <p>${ingredientsList}</p>
+        `;
     });
+
 });
 
 function showEdit() {
