@@ -21,6 +21,14 @@
       "description": "No. porciones",
       "type": "integer"
     },
+    "description": {
+      "description": "Descripcion breve del platillo",
+      "type": "string"
+    },
+    "steps": {
+      "description": "Pasos de elaboración",
+      "type": "string"
+    },
     "ingredients": {
       "type": "array",
       "items": {
