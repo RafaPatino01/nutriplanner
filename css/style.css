@@ -65,7 +65,7 @@
     height: 4rem;
     color: var(--text-tertiary);
     text-decoration: none;
-    filter: grayscale(100%) opacity(0.7);
+    filter: saturate(70%);
     transition: var(--transition-speed);
     font-size: 1.5rem;
 }
@@ -74,7 +74,7 @@
     filter: grayscale(0%) opacity(1);
     background: var(--bg-quinary);
     border-radius: 10px;
-    color: var(--text-tertiary)
+    color: var(--text-quinary)
 }
 
 .link-text {
@@ -205,7 +205,13 @@ body {
 .btn-primary {
     background-color: var(--bg-quinary);
     border-color: var(--text-secondary);
+    border:none;
     color: var(--text-senary);
+}
+
+.btn-primary:hover {
+    background-color: var(--text-senary);
+    color: var(--text-primary);
 }
 
 .btn-search {
