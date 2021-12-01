@@ -3,7 +3,8 @@
 import { app } from "./index.js";
 // firebase
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
-import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-storage.js"
 
 // json schema validator
 const Ajv = window.ajv2019;
@@ -22,6 +23,7 @@ const parser = new DOMParser();
 // Behav
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -214,7 +216,18 @@ addBtn.addEventListener("click", async (e) => {
         // Send to server
         const docRef = await addDoc(collection(db, "platos"), recipeData);
 
-        // TODO: send image data
+        // send image data (if exists)
+        if (inputImg) {
+            const imgType = inputImg.type.split('/')[1];
+            const fileName = docRef.id + "." + imgType;
+            const storageRef = ref(storage, fileName);
+            await uploadBytes(storageRef, inputImg);
+            const downloadURL = await getDownloadURL(storageRef);
+            // update doc entry
+            await updateDoc(docRef, {
+                thumbnail: downloadURL
+            });
+        }
 
         // TODO: Clear form
         modalBody.innerHTML = "<p>Receta guardada!</p>"
