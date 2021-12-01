@@ -85,8 +85,66 @@ signoutButton.addEventListener("click", () => {
     });
 });
 
-// addBtn.addEventListener("click", showAdd);
-editBtn.addEventListener("click", showEdit);
+editBtn.addEventListener("click", async (e) => {
+    editBtn.classList.add("active");
+    addBtn.classList.remove("active");
+    statsBtn.classList.remove("active");
+    
+    await fetch("../common/edit_menu.html")
+    .then(response => response.text())
+    .then((data) => {
+        contentArea.innerHTML = data;
+    })
+    .catch((error) => {
+        alert(error.message);
+    });
+
+    const results_menu = document.getElementById("results_menu");
+    const searchBtn = document.getElementById("searchBtn");
+
+    // Search by name
+    const inputSearch = document.getElementById("inputSearch");
+    searchBtn.addEventListener("click", async (e) => { 
+        let querySnapshot = await getDocs(query(collection(db, "platos")));
+        if (!(querySnapshot.empty)) {
+            results_menu.innerHTML = "";
+            
+            // For each plato
+            // No pude hacer el query para que contuviera substring
+            // https://stackoverflow.com/questions/26700924/query-based-on-multiple-where-clauses-in-firebase
+            
+            querySnapshot.forEach((doc) => {
+                let data = doc.data();
+                if( data.recipeName.toLowerCase().includes(inputSearch.value.toLowerCase()) ){
+                    results_menu.innerHTML += `
+                    <div class="row bg-edit mb-2 p-3 rounded">
+                        <div class="col-8"><h4>${data.recipeName}</h4></div>
+                        <div class="col-2 text-center border-end"><a class="btn btn-block btn-edit" id="edit-${doc.id}">Editar</a></div>
+                        <div class="col-2 text-center border-start"><a class="btn btn-block btn-delete" id="delete-${doc.id}">Borrar</a></div>
+                    </div>
+                    `;
+                }
+            });
+        } else {
+            // no results
+            results_menu.innerHTML = "No hay resultados...";
+        }
+        document.querySelectorAll('.btn-edit').forEach(item => {
+            item.addEventListener('click', event => {
+                editPlato(event.currentTarget.id);
+            });
+        });
+        document.querySelectorAll('.btn-delete').forEach(item => {
+            item.addEventListener('click', event => {
+                editPlato(event.currentTarget.id);
+            });
+        });
+    });
+
+
+    searchBtn.click(); //Show all results on start
+});
+
 statsBtn.addEventListener("click", showStats);
 
 addBtn.addEventListener("click", async (e) => {
@@ -259,20 +317,6 @@ addBtn.addEventListener("click", async (e) => {
 
 });
 
-function showEdit() {
-    editBtn.classList.add("active");
-    addBtn.classList.remove("active");
-    statsBtn.classList.remove("active");
-    contentArea.innerHTML = `
-    <div class="w-100 bg-light p-5 rounded-3" style="height: 100%;">
-    <div class="row">
-        <h1>Editar receta</h1>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero adipisci explicabo quas illo velit provident voluptates quidem officia odio minus mollitia voluptatem, fuga maxime commodi culpa cumque error quibusdam dolorem?</p>
-    </div>
-    </div>
-    `;
-}
-
 function showStats() {
     statsBtn.classList.add("active");
     editBtn.classList.remove("active");
@@ -285,4 +329,8 @@ function showStats() {
     </div>
     </div>
     `;
+}
+
+function editPlato(pId) {
+    console.log(pId+" was clicked");
 }

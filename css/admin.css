@@ -101,3 +101,16 @@ body {
   }
 
   textarea {  white-space: pre-wrap; }
+
+  .btn-edit {
+    background-color: rgb(243, 211, 67);
+    color: black;
+  }
+
+  .btn-delete {
+    background-color: rgb(252, 101, 101);
+  }
+
+  .bg-edit {
+    background-color: rgb(233, 233, 233);
+  }
