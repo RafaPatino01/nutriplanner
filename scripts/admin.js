@@ -145,6 +145,10 @@ addBtn.addEventListener("click", async (e) => {
         });
         // insert into doc
         document.getElementById("ingredientList").append(ingredientElement);
+
+        //Clean inputs
+        document.getElementById("inputIngredientName").value = "";
+        document.getElementById("inputIngredientQty").value = "";
     });
     
     
