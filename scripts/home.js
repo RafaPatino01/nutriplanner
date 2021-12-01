@@ -12,6 +12,7 @@ const signOutButton = document.getElementById("home_signout");
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         signOutButton.disabled = true;
+        alert("No has iniciado sesión");
     }
 });
 
