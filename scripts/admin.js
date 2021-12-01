@@ -170,6 +170,11 @@ addBtn.addEventListener("click", async (e) => {
             });
         });
         
+        // Add br to textarea
+        const addLinebreaks = (anyString) => {
+            return anyString.replaceAll("\n", "<br />\r\n");
+        };
+
         // Get form
         const inputName = document.getElementById("inputName").value;
         // no functionality for now
@@ -177,6 +182,7 @@ addBtn.addEventListener("click", async (e) => {
         const inputTime = Number(document.getElementById("inputTime").value);
         const inputServings = parseInt(document.getElementById("inputServings").value);
         const inputDescr = document.getElementById("inputDescr").value;
+        const inputSteps = addLinebreaks($("#inputSteps").val());
         
         // Get tag
         let tags = [];
@@ -196,42 +202,55 @@ addBtn.addEventListener("click", async (e) => {
             tags.push("dinner");
         }
 
-        // Falta steps
-        const recipeData = {
-            recipeName: inputName,
-            time: inputTime,
-            servings: inputServings,
-            description: inputDescr,
-            ingredients: ingredientsList,
-            tags: tags
-        };
-        const valid = validate(recipeData)
-        if (!valid) {
-            modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
+        let complete_fields = (tags != [] && inputName != "" && inputTime != null && inputServings != null && inputDescr != "" && inputSteps != "")
+        if(complete_fields){
+
+            const recipeData = {
+                recipeName: inputName,
+                time: inputTime,
+                servings: inputServings,
+                description: inputDescr,
+                steps: inputSteps,
+                ingredients: ingredientsList,
+                tags: tags
+            };
+            const valid = validate(recipeData)
+            if (!valid) {
+                modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
+                modalBtn.removeAttribute("disabled");
+                return;
+            }
+
+            // Data valid
+            // Send to server
+            const docRef = await addDoc(collection(db, "platos"), recipeData);
+
+            // send image data (if exists)
+            if (inputImg) {
+                const imgType = inputImg.type.split('/')[1];
+                const fileName = docRef.id + "." + imgType;
+                const storageRef = ref(storage, fileName);
+                await uploadBytes(storageRef, inputImg);
+                const downloadURL = await getDownloadURL(storageRef);
+                // update doc entry
+                await updateDoc(docRef, {
+                    thumbnail: downloadURL
+                });
+            }
+
+            // TODO: Clear form
+            modalBody.innerHTML = "<p>Receta guardada!</p>"
             modalBtn.removeAttribute("disabled");
-            return;
+   
+            document.getElementById("addForm").reset();
+            document.getElementById("ingredientList").innerHTML = "";
+
         }
-
-        // Data valid
-        // Send to server
-        const docRef = await addDoc(collection(db, "platos"), recipeData);
-
-        // send image data (if exists)
-        if (inputImg) {
-            const imgType = inputImg.type.split('/')[1];
-            const fileName = docRef.id + "." + imgType;
-            const storageRef = ref(storage, fileName);
-            await uploadBytes(storageRef, inputImg);
-            const downloadURL = await getDownloadURL(storageRef);
-            // update doc entry
-            await updateDoc(docRef, {
-                thumbnail: downloadURL
-            });
+        else {
+        //missing fields
+            modalBody.innerHTML = "<p>No has llenado todos los campos</p>"
+            modalBtn.removeAttribute("disabled");
         }
-
-        // TODO: Clear form
-        modalBody.innerHTML = "<p>Receta guardada!</p>"
-        modalBtn.removeAttribute("disabled");
     });
 
 });

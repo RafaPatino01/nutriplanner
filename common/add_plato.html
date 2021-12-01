@@ -4,102 +4,109 @@
         <br>
         <p class="text-small">Añade nuevas recetas para que estén disponibles en la plataforma</p>
         <br>
-        <div class="row mb-3">
-            <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="inputName">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="inputDescr" class="col-sm-2 col-form-label">Descripción</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="inputDescr">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="inputServings" class="col-sm-2 col-form-label">Porciones</label>
-            <div class="col-sm-10">
-                <input type="number" class="form-control" id="inputServings">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="inputTime" class="col-sm-2 col-form-label">Tiempo (Minutos)</label>
-            <div class="col-sm-10">
-                <input type="number" class="form-control" id="inputTime">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="inputPrecio" class="col-sm-2 col-form-label">Precio (MXN)</label>
-            <div class="col-sm-10">
-                <input type="number" class="form-control" id="inputPrecio" placeholder="No sirvo :C">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="formFile" class="col-sm-2 col-form-label">Imagen</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="file" accept="image/jpeg,image/png" id="inputImg">
-            </div>
-        </div>
-        <fieldset class="row mb-3">
-            <legend class="col-form-label col-sm-2 pt-0">Tags</legend>
-            <div class="col-sm-3">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="vegetarian">
-                    <label class="form-check-label">Vegetariano</label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="vegan">
-                    <label class="form-check-label">Vegano</label>
+        <form id="addForm">
+            <div class="row mb-3">
+                <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputName" placeholder="Nombre">
                 </div>
             </div>
-            <div class="col-sm-3">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="breakfast">
-                    <label class="form-check-label">Desayuno</label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="lunch">
-                    <label class="form-check-label">Comida</label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="dinner">
-                    <label class="form-check-label">Cena</label>
+            <div class="row mb-3">
+                <label for="inputDescr" class="col-sm-2 col-form-label">Descripción</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputDescr" placeholder="Descripción">
                 </div>
             </div>
-        </fieldset>
-        <hr>
-        <div class="row mb-3">
-            <label for="inputIngredientName" class="col-sm-2 col-form-label">Añadir ingredientes</label>
-            <div class="col-sm-5 col-form-label">
-                <div id="inputIngredient" class="input-group">
-                    <input type="text" class="form-control w-50" id="inputIngredientName" placeholder="ingrediente">
-                    <input type="text" class="form-control" id="inputIngredientQty" placeholder="qty">
-                    <select class="form-select" id="inputIngredientSelect">
-                        <option selected>unidad...</option>
-                        <option value="g">g</option>
-                        <option value="oz">oz</option>
-                        <option value="L">L</option>
-                        <option value="ml">ml</option>
-                        <option value="taza">taza</option>
-                        <option value="cda">cda</option>
-                        <option value="cdta">cdta</option>
-                    </select>
+            <div class="row mb-3">
+                <label for="inputServings" class="col-sm-2 col-form-label">Porciones</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="inputServings" placeholder="Porciones">
                 </div>
             </div>
-            <div class="col-sm-2">
-                <button id="ingredientBtn" type="button" class="btn btn-primary">Agregar</button>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-6 p-3">
-                <div class="row" id="ingredientList">
+            <div class="row mb-3">
+                <label for="inputTime" class="col-sm-2 col-form-label">Tiempo (Minutos)</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="inputTime" placeholder="Tiempo (Minutos)">
                 </div>
             </div>
-        </div>
+            <div class="row mb-3">
+                <label for="inputPrecio" class="col-sm-2 col-form-label">Precio (MXN)</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="inputPrecio" placeholder="Precio (MXN)">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="inputPrecio" class="col-sm-2 col-form-label">Instrucciones</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="inputSteps" rows="3" placeholder="Instrucciones"></textarea>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="formFile" class="col-sm-2 col-form-label">Imagen</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="file" accept="image/jpeg,image/png" id="inputImg">
+                </div>
+            </div>
+            <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0">Tags</legend>
+                <div class="col-sm-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="vegetarian">
+                        <label class="form-check-label">Vegetariano</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="vegan">
+                        <label class="form-check-label">Vegano</label>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="breakfast">
+                        <label class="form-check-label">Desayuno</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="lunch">
+                        <label class="form-check-label">Comida</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="dinner">
+                        <label class="form-check-label">Cena</label>
+                    </div>
+                </div>
+            </fieldset>
+            <hr>
+            <div class="row mb-3">
+                <label for="inputIngredientName" class="col-sm-2 col-form-label">Añadir ingredientes</label>
+                <div class="col-sm-5 col-form-label">
+                    <div id="inputIngredient" class="input-group">
+                        <input type="text" class="form-control w-50" id="inputIngredientName" placeholder="ingrediente">
+                        <input type="text" class="form-control" id="inputIngredientQty" placeholder="qty">
+                        <select class="form-select" id="inputIngredientSelect">
+                            <option selected>unidad...</option>
+                            <option value="g">g</option>
+                            <option value="oz">oz</option>
+                            <option value="L">L</option>
+                            <option value="ml">ml</option>
+                            <option value="taza">taza</option>
+                            <option value="cda">cda</option>
+                            <option value="cdta">cdta</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <button id="ingredientBtn" type="button" class="btn btn-primary">Agregar</button>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-6 p-3">
+                    <div class="row" id="ingredientList">
+                    </div>
+                </div>
+            </div>
 
+        </form>
         <button id="btnReceta" class="mt-3 btn btn-lg btn-primary">Añadir receta</button>
 
-        <div id="test-output" class="bg-white"></div>
     </div>
 </div>

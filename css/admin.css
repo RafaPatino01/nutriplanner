@@ -99,3 +99,5 @@ body {
   .bg-gray {
     background-color: #f0f0f0;
   }
+
+  textarea {  white-space: pre-wrap; }
