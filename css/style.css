@@ -9,7 +9,7 @@
     --text-senary: #8C4843; 
     --bg-primary: #223843;
     --bg-secondary: #EFF1F3; 
-    --bg-tertiary: #172c35;
+    --bg-tertiary: rgb(7, 36, 51);
     --bg-quaternary: #EDD5C7;  
     --bg-quinary: #ECB595; 
     --bg-senary: #cfbcc8; 
@@ -214,6 +214,30 @@ body {
     color: var(--text-primary);
 }
 
+.btn-secondary {
+    background-color: var(--text-tertiary);
+    color: var(--text-quinary);
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: var(--text-senary);
+    color: var(--text-primary);
+    border: none;
+}
+
+.btn-tertiary {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: none;
+}
+
+.btn-tertiary:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--bg-quaternary);
+    border: none;
+}
+
 .btn-search {
     background-color: var(--bg-tertiary);
     border-radius: 10px;
@@ -231,4 +255,12 @@ h3 {
 
 footer {
     color: var(--text-secondary);
+}
+
+.bg-primary {
+    background-color: var(--bg-secondary) !important; 
+}
+
+#login_form h3 {
+    color: var(--text-quinary);
 }
