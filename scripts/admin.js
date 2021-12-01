@@ -3,15 +3,11 @@
 import { app } from "./index.js";
 // firebase
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
 
 // json schema validator
 const Ajv = window.ajv2019;
-const ajv = new Ajv ({loadSchema : async (uri) => {
-    const res = await request.json(uri);
-    if (res.statusCode >= 400) throw new Error("Loading error: " + res.StatusCode);
-    return res.body;
-}});
+const ajv = new Ajv ();
 
 //Menu event listeners
 const addBtn = document.getElementById("addBtn");
@@ -151,7 +147,13 @@ addBtn.addEventListener("click", async (e) => {
     
     
     const btnReceta = document.getElementById("btnReceta");
-    btnReceta.addEventListener("click", () => {
+    btnReceta.addEventListener("click", async () => {
+        // call modal
+        const loadingModal = new bootstrap.Modal(document.getElementById("loadingModal"));
+        const modalBody = document.getElementById("loadingModal").querySelector(".modal-body");
+        const modalBtn = document.getElementById("loadingModal").querySelector("button");
+        loadingModal.toggle();
+        
         // Get ingredients
         const ingredientes = Array.from(document.getElementsByClassName("ingredient-entry"));
         const ingredientsList = []; // [name, size]
@@ -160,7 +162,7 @@ addBtn.addEventListener("click", async (e) => {
             ingredientsList.push({
                 ingredientName: element.dataset.ingredientName,
                 size: {
-                    amount: element.dataset.ingredientQty,
+                    amount: Number(element.dataset.ingredientQty),
                     unit: element.dataset.ingredientUnit
                 }
             });
@@ -168,13 +170,10 @@ addBtn.addEventListener("click", async (e) => {
         
         // Get form
         const inputName = document.getElementById("inputName").value;
+        // no functionality for now
         const [inputImg] = document.getElementById("inputImg").files;
-        var imgPath = "";
-        if (inputImg) {
-            imgPath = URL.createObjectURL(inputImg);
-        }
-        const inputTime = document.getElementById("inputTime").value;
-        const inputServings = document.getElementById("inputServings").value;
+        const inputTime = Number(document.getElementById("inputTime").value);
+        const inputServings = parseInt(document.getElementById("inputServings").value);
         const inputDescr = document.getElementById("inputDescr").value;
         
         // Get tag
@@ -195,16 +194,31 @@ addBtn.addEventListener("click", async (e) => {
             tags.push("dinner");
         }
 
-        document.getElementById("test-output").innerHTML = 
-        `
-        <p>Name: ${inputName}</p>
-        <p>img: ${imgPath}</p>
-        <p>Time: ${inputTime}</p>
-        <p>Servings: ${inputServings}</p>
-        <p>Descr: ${inputDescr}</p>
-        <p>Ingredients: ${ingredientsList}</p>
-        <p>Tags: ${tags}</p>
-        `;
+        // Falta steps
+        const recipeData = {
+            recipeName: inputName,
+            time: inputTime,
+            servings: inputServings,
+            description: inputDescr,
+            ingredients: ingredientsList,
+            tags: tags
+        };
+        const valid = validate(recipeData)
+        if (!valid) {
+            modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
+            modalBtn.removeAttribute("disabled");
+            return;
+        }
+
+        // Data valid
+        // Send to server
+        const docRef = await addDoc(collection(db, "platos"), recipeData);
+
+        // TODO: send image data
+
+        // TODO: Clear form
+        modalBody.innerHTML = "<p>Receta guardada!</p>"
+        modalBtn.removeAttribute("disabled");
     });
 
 });
