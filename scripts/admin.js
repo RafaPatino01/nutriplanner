@@ -130,13 +130,13 @@ editBtn.addEventListener("click", async (e) => {
             results_menu.innerHTML = "No hay resultados...";
         }
         document.querySelectorAll('.btn-edit').forEach(item => {
-            item.addEventListener('click', event => {
-                editPlato(event.currentTarget.id);
+            item.addEventListener('click', async event => {
+                await editPlato(event.currentTarget.id);
             });
         });
         document.querySelectorAll('.btn-delete').forEach(item => {
-            item.addEventListener('click', event => {
-                editPlato(event.currentTarget.id);
+            item.addEventListener('click', async event => {
+                await editPlato(event.currentTarget.id);
             });
         });
     });
@@ -331,6 +331,31 @@ function showStats() {
     `;
 }
 
-function editPlato(pId) {
-    console.log(pId+" was clicked");
+async function editPlato(pId) {
+    await fetch("../common/edit_view.html")
+    .then(response => response.text())
+    .then((data) => {
+        contentArea.innerHTML = data;
+    })
+    .catch((error) => {
+        alert(error.message);
+    });
+    
+    let id = pId.replace('edit-','');;
+
+    document.getElementById("btnBack").addEventListener('click', event => {
+        editBtn.click();
+    });
+    document.getElementById("title").innerHTML += "<span class='text-muted text-small'> "+id+"</span>";
+
+    const docRef = doc(db, "platos", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+
 }
