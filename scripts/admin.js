@@ -203,8 +203,7 @@ addBtn.addEventListener("click", async (e) => {
         loadingModal.toggle();
 
         const recipeData = getForm();
-        const valid = validate(recipeData)
-        console.log(recipeData);
+        const valid = validate(recipeData);
         if (!valid) {
             modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
             modalBtn.removeAttribute("disabled");
