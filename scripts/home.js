@@ -3,7 +3,7 @@
 import { app } from "./index.js";
 // firebase
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js";
-import { collection, getDocs, getFirestore, query, where } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+import { collection, getDocs, getFirestore, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
 
 // firebase app
 const auth = getAuth(app);
@@ -11,10 +11,14 @@ const db = getFirestore(app);
 
 const navbar = document.getElementById("navbar-nav");
 const signOutButton = document.getElementById("home_signout");
+const cardsDiv = document.getElementById("cards");
 // navbar elements
 const navbarCol = navbar.children;
 const signOutNav = navbarCol[5];
 const signInNav = navbarCol[1];
+
+// helper objects
+const parser = new DOMParser();
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -46,6 +50,37 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         // User is signed out
     }
+});
+
+// on doc load
+window.addEventListener("DOMContentLoaded", async () => {
+    // Load in cards
+    const platoDoc = await fetch("common/recipe_card.html")
+    .then(response => response.text())
+    .then(data => parser.parseFromString(data,"text/html"));
+    const platoElem = platoDoc.body.firstElementChild;
+    // console.log(platoElem);
+
+    // Get realtime Recipes
+    const unsub = onSnapshot(collection(db, "platos"), (querySnapshot) => {
+        cardsDiv.innerHTML = '';
+        querySnapshot.forEach((doc) => {
+            const data = doc.data()
+            // customize card to data
+            const newCard = platoElem.cloneNode(true);
+            newCard.querySelector(".card-title").innerText = data.recipeName;
+            const viewBtn = newCard.querySelector(".btn-view");
+            viewBtn.dataset.id = doc.id;
+            // TODO: view event
+            // viewBtn.addEventListener("click" , (e) => {});
+            if (data.thumbnail) {
+                // if available image update
+                newCard.querySelector("img").src = data.thumbnail;
+            }
+            // finally, append card
+            cardsDiv.append(newCard);
+        });
+    });
 });
 
 signOutButton.addEventListener("click", async (e) => {
