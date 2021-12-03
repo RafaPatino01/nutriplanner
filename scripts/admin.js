@@ -412,11 +412,22 @@ async function deletePlato(pId) {
 
     //Show modal
     loadingModal.toggle();
-    await deleteDoc(doc(db, "platos", pId));
+
+    const docRef = doc(db, "platos", pId);
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data()
+
+    // Delete image
+    if (data.thumbnail) {
+        const delRef = ref(storage, data.thumbnail);
+        await deleteObject(delRef);
+    }
+    // delete doc
+    await deleteDoc(docRef);
     modalBody.innerHTML = "<p style='background-color=rgb(252, 101, 101)'>Receta eliminada!</p>"
     modalBtn.removeAttribute("disabled");
 
-    await delay(3000); //wait
+    await delay(500); //wait
     location.reload();
 }
 
