@@ -17,6 +17,10 @@
       "description": "Tiempo para cocinar en minutos",
       "type": "number"
     },
+    "price": {
+      "description": "Precio en mxn",
+      "type": "number"
+    },
     "servings": {
       "description": "No. porciones",
       "type": "integer"

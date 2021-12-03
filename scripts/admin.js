@@ -3,7 +3,7 @@
 import { app } from "./index.js";
 // firebase
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js";
-import { addDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot, query, updateDoc, where } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+import { addDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot, query, updateDoc, where, setDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-storage.js";
 
 // json schema validator
@@ -16,6 +16,11 @@ const editBtn = document.getElementById("editBtn");
 const statsBtn = document.getElementById("statsBtn");
 const signoutButton = document.getElementById("LogOutBtn");
 const contentArea = document.getElementById("content");
+
+// Modals
+const loadingModal = new bootstrap.Modal(document.getElementById("loadingModal"));
+const modalBody = document.getElementById("loadingModal").querySelector(".modal-body");
+const modalBtn = document.getElementById("loadingModal").querySelector("button");
 
 // helper objects
 const parser = new DOMParser();
@@ -43,6 +48,13 @@ onAuthStateChanged(auth, async (user) => {
         // redirect home
         window.location.assign("../");
     }
+});
+
+// Reset loading modal
+modalBtn.addEventListener("click", event =>{
+    modalBody.innerHTML = `<div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>`;
 });
 
 // onload content
@@ -167,152 +179,45 @@ addBtn.addEventListener("click", async (e) => {
     });
 
     const ingredientBtn = document.getElementById("ingredientBtn");
-    ingredientBtn.addEventListener("click", () => {
-        const ingredientName = document.getElementById("inputIngredientName").value;
-        const ingredientQty = document.getElementById("inputIngredientQty").value;
-        const ingredientUnit = document.getElementById("inputIngredientSelect").value;
-
-        // ingredient entries
-        // ingredient class to fetch all later
-        // could also be read from ajax
-        let ingredientDoc = parser.parseFromString(`
-            <div class="ingredient-entry row mb-1" data-ingredient-name="${ingredientName}" data-ingredient-qty="${ingredientQty}" data-ingredient-unit="${ingredientUnit}">
-                <div class="col-6 border bg-white rounded">
-                    ${ingredientName}
-                </div>
-                <div class="col-2 border bg-white rounded-end" >
-                    ${ingredientQty}
-                </div>
-                <div class="col-2 border bg-white rounded" >
-                    ${ingredientUnit}
-                </div>
-                <div class="col-2 text-center">
-                    <a class="btn-delete btn bg-gray" aria-label="Delete">
-                        <i class="bi bi-x-circle"></i>
-                    </a>
-                </div>
-            </div>
-            `,
-            "text/html");
-        // get only div
-        const ingredientElement = ingredientDoc.body.firstElementChild;
-        // delete self
-        ingredientElement.querySelector(".btn-delete")
-        .addEventListener("click", () => {
-            ingredientElement.remove();
-        });
-        // insert into doc
-        document.getElementById("ingredientList").append(ingredientElement);
-
-        //Clean inputs
-        document.getElementById("inputIngredientName").value = "";
-        document.getElementById("inputIngredientQty").value = "";
-    });
-
+    ingredientBtn.addEventListener("click", addIngredientFront);
 
     const btnReceta = document.getElementById("btnReceta");
     btnReceta.addEventListener("click", async () => {
         // call modal
-        const loadingModal = new bootstrap.Modal(document.getElementById("loadingModal"));
-        const modalBody = document.getElementById("loadingModal").querySelector(".modal-body");
-        const modalBtn = document.getElementById("loadingModal").querySelector("button");
+        
         loadingModal.toggle();
 
-        // Get ingredients
-        const ingredientes = Array.from(document.getElementsByClassName("ingredient-entry"));
-        const ingredientsList = []; // [name, size]
-
-        ingredientes.forEach((element) => {
-            ingredientsList.push({
-                ingredientName: element.dataset.ingredientName,
-                size: {
-                    amount: Number(element.dataset.ingredientQty),
-                    unit: element.dataset.ingredientUnit
-                }
-            });
-        });
-
-        // Add br to textarea
-        const addLinebreaks = (anyString) => {
-            return anyString.replaceAll("\n", "<br />\r\n");
-        };
-
-        // Get form
-        const inputName = document.getElementById("inputName").value;
-        // no functionality for now
         const [inputImg] = document.getElementById("inputImg").files;
-        const inputTime = Number(document.getElementById("inputTime").value);
-        const inputServings = parseInt(document.getElementById("inputServings").value);
-        const inputDescr = document.getElementById("inputDescr").value;
-        const inputSteps = addLinebreaks($("#inputSteps").val());
 
-        // Get tag
-        let tags = [];
-        if (document.getElementById("vegetarian").checked) {
-            tags.push("vegetarian");
-        }
-        if (document.getElementById("vegan").checked) {
-            tags.push("vegan");
-        }
-        if (document.getElementById("breakfast").checked) {
-            tags.push("breakfast");
-        }
-        if (document.getElementById("lunch").checked) {
-            tags.push("lunch");
-        }
-        if (document.getElementById("dinner").checked) {
-            tags.push("dinner");
-        }
-
-        let complete_fields = (tags != [] && inputName != "" && inputTime != null && inputServings != null && inputDescr != "" && inputSteps != "")
-        if (complete_fields) {
-
-            const recipeData = {
-                recipeName: inputName,
-                time: inputTime,
-                servings: inputServings,
-                description: inputDescr,
-                steps: inputSteps,
-                ingredients: ingredientsList,
-                tags: tags
-            };
-            const valid = validate(recipeData)
-            if (!valid) {
-                modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
-                modalBtn.removeAttribute("disabled");
-                return;
-            }
-
-            // Data valid
-            // Send to server
-            const docRef = await addDoc(collection(db, "platos"), recipeData);
-
-            // send image data (if exists)
-            if (inputImg) {
-                const imgType = inputImg.type.split('/')[1];
-                const fileName = docRef.id + "." + imgType;
-                const storageRef = ref(storage, fileName);
-                await uploadBytes(storageRef, inputImg);
-                const downloadURL = await getDownloadURL(storageRef);
-                // update doc entry
-                await updateDoc(docRef, {
-                    thumbnail: downloadURL
-                });
-            }
-
-            // TODO: Clear form
-            modalBody.innerHTML = "<p>Receta guardada!</p>"
+        const recipeData = getForm();
+        const valid = validate(recipeData)
+        if (!valid) {
+            modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
             modalBtn.removeAttribute("disabled");
-
-            document.getElementById("addForm").reset();
-            document.getElementById("ingredientList").innerHTML = "";
-
+            return;
         }
-        else {
-            //missing fields
-            modalBody.innerHTML = "<p>No has llenado todos los campos</p>"
-            modalBtn.removeAttribute("disabled");
+
+        // Data valid
+        // Send to server
+        const docRef = await addDoc(collection(db, "platos"), recipeData);
+
+        // send image data (if exists)
+        if (inputImg) {
+            const imgType = inputImg.type.split('/')[1];
+            const fileName = docRef.id + "." + imgType;
+            const storageRef = ref(storage, fileName);
+            await uploadBytes(storageRef, inputImg);
+            // update doc entry
+            await updateDoc(docRef, {
+                thumbnail: fileName
+            });
         }
+
+        modalBody.innerHTML = "<p>Receta guardada!</p>"
+        modalBtn.removeAttribute("disabled");
+
+        document.getElementById("addForm").reset();
+        document.getElementById("ingredientList").innerHTML = "";
     });
 
 });
@@ -342,12 +247,221 @@ async function editPlato(pId) {
         return;
     });
 
-    const docSnap = await getDoc(doc(db, "platos", pId));
-    const data = docSnap.data();
+    //ADD INGREDIENT funcionalidad
+    const ingredientBtn = document.getElementById("ingredientBtn");
+    ingredientBtn.addEventListener("click", addIngredientFront);
 
+    // ADD ID to html
+    document.getElementById("title").innerHTML += ` <span class='text-muted text-small'>${pId}</span>`;
     document.getElementById("btnBack").addEventListener('click', (e) => {
         editBtn.click();
     });
-    document.getElementById("title").innerHTML += ` <span class='text-muted text-small'>${pId}</span>`;
 
+    // FILL INPUTS
+    const docSnap = await getDoc(doc(db, "platos", pId));
+    if (docSnap.exists()) {
+        
+        const data = docSnap.data();
+        document.getElementById("inputName").value = data.recipeName;
+        document.getElementById("inputDescr").value = data.description;
+        document.getElementById("inputServings").value = data.servings;
+        document.getElementById("inputTime").value = data.time;
+        document.getElementById("inputPrecio").value = data.price;
+        document.getElementById("inputSteps").value = replaceAll(data.steps,"<br />",""); ;
+
+        for(let i = 0; i < data.tags.length; i++){
+            switch(data.tags[i]){
+                case "vegetarian":
+                    document.getElementById("vegetarian").checked = true;
+                    break;
+                case "vegan":
+                    document.getElementById("vegan").checked = true;
+                    break;
+                case "breakfast":
+                    document.getElementById("breakfast").checked = true;
+                    break;
+                case "lunch":
+                    document.getElementById("lunch").checked = true;
+                    break;
+                case "dinner":
+                    document.getElementById("dinner").checked = true;
+                    break;
+            }
+        }
+
+        for(let i = 0; i < data.ingredients.length; i++){
+            let ingredientName = data.ingredients[i].ingredientName;
+            let ingredientQty = data.ingredients[i].size.amount;
+            let ingredientUnit = data.ingredients[i].size.unit;
+
+            let ingredientDoc = parser.parseFromString(`
+            <div class="ingredient-entry row mb-1" data-ingredient-name=${ingredientName} data-ingredient-qty=${ingredientQty} data-ingredient-unit=${ingredientUnit}>
+                <div class="col-6 border bg-white rounded">
+                    ${ingredientName}
+                </div>
+                <div class="col-2 border bg-white rounded-end" >
+                    ${ingredientQty}
+                </div>
+                <div class="col-2 border bg-white rounded" >
+                    ${ingredientUnit}
+                </div>
+                <div class="col-2 text-center">
+                    <a class="btn-delete btn bg-gray" aria-label="Delete">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                </div>
+            </div>
+            `,
+            "text/html");
+            // get only div
+            const ingredientElement = ingredientDoc.body.firstElementChild;
+            // delete self
+            ingredientElement.querySelector(".btn-delete")
+            .addEventListener("click", () => {
+                ingredientElement.remove();
+            });
+            // insert into doc
+            document.getElementById("ingredientList").append(ingredientElement);
+        }
+        
+    } else {
+        console.warn("No existe el documento");
+    }
+    
+    // btn Update receta
+    document.getElementById("btnReceta").addEventListener('click', async (e) => {
+
+        //Show modal
+        loadingModal.toggle();
+
+        // Get data from form
+        const recipeData = getForm();
+        const valid = validate(recipeData)
+        if (!valid) {
+            modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
+            modalBtn.removeAttribute("disabled");
+            return;
+        }
+
+        //Update doc
+        const docRef = doc(db, "platos", pId);
+        await setDoc(docRef, recipeData, { merge: true });
+
+        modalBody.innerHTML = "<p>Receta guardada!</p>"
+        modalBtn.removeAttribute("disabled");
+    });
+
+
+}
+
+//Remove substring from string
+function replaceAll(str, find, replace) {
+    let escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    return str.replace(new RegExp(escapedFind, 'g'), replace);
+}
+
+function addIngredientFront(){
+    const ingredientName = document.getElementById("inputIngredientName").value;
+    const ingredientQty = document.getElementById("inputIngredientQty").value;
+    const ingredientUnit = document.getElementById("inputIngredientSelect").value;
+
+    let ingredientDoc = parser.parseFromString(`
+        <div class="ingredient-entry row mb-1" data-ingredient-name="${ingredientName}" data-ingredient-qty="${ingredientQty}" data-ingredient-unit="${ingredientUnit}">
+            <div class="col-6 border bg-white rounded">
+                ${ingredientName}
+            </div>
+            <div class="col-2 border bg-white rounded-end" >
+                ${ingredientQty}
+            </div>
+            <div class="col-2 border bg-white rounded" >
+                ${ingredientUnit}
+            </div>
+            <div class="col-2 text-center">
+                <a class="btn-delete btn bg-gray" aria-label="Delete">
+                    <i class="bi bi-x-circle"></i>
+                </a>
+            </div>
+        </div>
+        `,
+        "text/html");
+    // get only div
+    const ingredientElement = ingredientDoc.body.firstElementChild;
+    // delete self
+    ingredientElement.querySelector(".btn-delete")
+    .addEventListener("click", () => {
+        ingredientElement.remove();
+    });
+    // insert into doc
+    document.getElementById("ingredientList").append(ingredientElement);
+
+    //Clean inputs
+    document.getElementById("inputIngredientName").value = "";
+    document.getElementById("inputIngredientQty").value = "";
+}
+
+function getForm(){
+    // Add br to textarea
+    const addLinebreaks = (anyString) => {
+        return anyString.replaceAll("\n", "<br />\r\n");
+    };
+    
+    // Get ingredients
+    const ingredientes = Array.from(document.getElementsByClassName("ingredient-entry"));
+    const ingredientsList = []; // [name, size]
+
+    ingredientes.forEach((element) => {
+        ingredientsList.push({
+            ingredientName: element.dataset.ingredientName,
+            size: {
+                amount: Number(element.dataset.ingredientQty),
+                unit: element.dataset.ingredientUnit
+            }
+        });
+    });
+
+    // Get form
+    const inputName = document.getElementById("inputName").value;
+    const inputTime = Number(document.getElementById("inputTime").value);
+    const inputServings = parseInt(document.getElementById("inputServings").value);
+    const inputDescr = document.getElementById("inputDescr").value;
+    const inputSteps = addLinebreaks($("#inputSteps").val());
+    const inputPrecio = Number(document.getElementById("inputPrecio").value);
+
+    // Get tag
+    let tags = [];
+    if (document.getElementById("vegetarian").checked) {
+        tags.push("vegetarian");
+    }
+    if (document.getElementById("vegan").checked) {
+        tags.push("vegan");
+    }
+    if (document.getElementById("breakfast").checked) {
+        tags.push("breakfast");
+    }
+    if (document.getElementById("lunch").checked) {
+        tags.push("lunch");
+    }
+    if (document.getElementById("dinner").checked) {
+        tags.push("dinner");
+    }
+
+    let complete_fields = (tags != [] && inputName != "" && inputTime != null && inputServings != null && inputDescr != "" && inputSteps != "")
+    if (complete_fields) {
+        let recipeData = {
+            recipeName: inputName,
+            time: inputTime,
+            servings: inputServings,
+            description: inputDescr,
+            price: inputPrecio,
+            steps: inputSteps,
+            ingredients: ingredientsList,
+            tags: tags
+        };
+        return recipeData;
+    }
+    else {
+        //missing fields
+        modalBody.innerHTML = "<p>No has llenado todos los campos</p>"
+        modalBtn.removeAttribute("disabled");
+    }
 }
