@@ -233,6 +233,11 @@ body {
     color: var(--text-primary);
 }
 
+.btn-primary:focus {
+    background-color: var(--bg-quaternary);
+    border-color: var(--text-quaternary);
+}
+
 .btn-secondary {
     background-color: var(--text-tertiary);
     color: var(--text-quinary);
@@ -284,14 +289,22 @@ footer {
     color: var(--text-quinary);
 }
 
-#vewRecipeModal {
+#recipeModal {
     text-align: justify;
 }
 
-#vewRecipeModal h3, h4, h5 {
+#recipeModal h3, h4, h5 {
     color: var(--text-tertiary);
 }
 
-#vewRecipeModal h6 {
-    color: var(--text-secondary);
+#recipeModal h6 {
+    color: var(--text-senary);
+}
+
+#recipeModal .left-col {
+    background-color: var(--bg-secondary);
+}
+
+#modal-recipe{
+    max-width: 500px;
 }
