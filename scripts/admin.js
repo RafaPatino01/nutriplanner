@@ -176,7 +176,7 @@ addBtn.addEventListener("click", async (e) => {
         // ingredient class to fetch all later
         // could also be read from ajax
         let ingredientDoc = parser.parseFromString(`
-            <div class="ingredient-entry row mb-1" data-ingredient-name=${ingredientName} data-ingredient-qty=${ingredientQty} data-ingredient-unit=${ingredientUnit}>
+            <div class="ingredient-entry row mb-1" data-ingredient-name="${ingredientName}" data-ingredient-qty="${ingredientQty}" data-ingredient-unit="${ingredientUnit}">
                 <div class="col-6 border bg-white rounded">
                     ${ingredientName}
                 </div>
