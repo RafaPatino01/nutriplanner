@@ -2,13 +2,13 @@
 // dynamic content
 import { app } from "./index.js";
 // firebase
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"
-import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-storage.js"
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js";
+import { addDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot, query, updateDoc, where } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-storage.js";
 
 // json schema validator
 const Ajv = window.ajv2019;
-const ajv = new Ajv ();
+const ajv = new Ajv();
 
 //Menu event listeners
 const addBtn = document.getElementById("addBtn");
@@ -48,9 +48,9 @@ onAuthStateChanged(auth, async (user) => {
 // onload content
 var validate;
 window.addEventListener("DOMContentLoaded", async () => {
-    // start with add enabled
-    addBtn.click();
-    addBtn.blur();
+    // start with edit enabled
+    editBtn.click();
+    editBtn.blur();
 
     // setup ajv
     await fetch('../schemas/size-schema.json')
@@ -89,7 +89,7 @@ editBtn.addEventListener("click", async (e) => {
     editBtn.classList.add("active");
     addBtn.classList.remove("active");
     statsBtn.classList.remove("active");
-    
+
     await fetch("../common/edit_menu.html")
     .then(response => response.text())
     .then((data) => {
@@ -97,47 +97,47 @@ editBtn.addEventListener("click", async (e) => {
     })
     .catch((error) => {
         alert(error.message);
+        return;
     });
 
     const results_menu = document.getElementById("results_menu");
     const searchBtn = document.getElementById("searchBtn");
-
-    // Search by name
     const inputSearch = document.getElementById("inputSearch");
-    searchBtn.addEventListener("click", async (e) => { 
-        let querySnapshot = await getDocs(query(collection(db, "platos")));
-        if (!(querySnapshot.empty)) {
+
+    searchBtn.addEventListener("click", (e) => {
+        const q = inputSearch.value.toLowerCase();
+
+        const unsub = onSnapshot(collection(db, "platos"), (querySnapshot) => {
             results_menu.innerHTML = "";
-            
-            // For each plato
-            // No pude hacer el query para que contuviera substring
-            // https://stackoverflow.com/questions/26700924/query-based-on-multiple-where-clauses-in-firebase
-            
             querySnapshot.forEach((doc) => {
-                let data = doc.data();
-                if( data.recipeName.toLowerCase().includes(inputSearch.value.toLowerCase()) ){
-                    results_menu.innerHTML += `
-                    <div class="row bg-edit mb-2 p-3 rounded">
-                        <div class="col-8"><h4>${data.recipeName}</h4></div>
-                        <div class="col-2 text-center border-end"><a class="btn btn-block btn-edit" id="edit-${doc.id}">Editar</a></div>
-                        <div class="col-2 text-center border-start"><a class="btn btn-block btn-delete" id="delete-${doc.id}">Borrar</a></div>
-                    </div>
-                    `;
+                // query name
+                const data = doc.data();
+                if (!(data.recipeName.toLowerCase().includes(q))) {
+                    // not matching, skip entry
+                    return;
                 }
+
+                results_menu.innerHTML += `
+                <div class="row bg-edit mb-2 p-3 rounded">
+                    <div class="col-8"><h4>${doc.data().recipeName}<h4></div>
+                    <div class="col-2 text-center border-end">
+                        <a class="btn-edit btn btn-block" data-id="${doc.id}">Editar</a>
+                    </div>
+                    <div class="col-2 text-center border-start">
+                        <a class="btn-delete btn btn-block" data-id="${doc.id}">Borrar</a>
+                    </div>
+                </div>
+                `
             });
-        } else {
-            // no results
-            results_menu.innerHTML = "No hay resultados...";
-        }
-        document.querySelectorAll('.btn-edit').forEach(item => {
-            item.addEventListener('click', async event => {
-                await editPlato(event.currentTarget.id);
+
+            document.querySelectorAll(".btn-edit").forEach((btn) => {
+                btn.addEventListener("click", async (e) => {
+                    unsub();
+                    await editPlato(e.target.dataset.id);
+                });
             });
-        });
-        document.querySelectorAll('.btn-delete').forEach(item => {
-            item.addEventListener('click', async event => {
-                await editPlato(event.currentTarget.id);
-            });
+
+            // delete plato
         });
     });
 
@@ -208,8 +208,8 @@ addBtn.addEventListener("click", async (e) => {
         document.getElementById("inputIngredientName").value = "";
         document.getElementById("inputIngredientQty").value = "";
     });
-    
-    
+
+
     const btnReceta = document.getElementById("btnReceta");
     btnReceta.addEventListener("click", async () => {
         // call modal
@@ -217,7 +217,7 @@ addBtn.addEventListener("click", async (e) => {
         const modalBody = document.getElementById("loadingModal").querySelector(".modal-body");
         const modalBtn = document.getElementById("loadingModal").querySelector("button");
         loadingModal.toggle();
-        
+
         // Get ingredients
         const ingredientes = Array.from(document.getElementsByClassName("ingredient-entry"));
         const ingredientsList = []; // [name, size]
@@ -231,7 +231,7 @@ addBtn.addEventListener("click", async (e) => {
                 }
             });
         });
-        
+
         // Add br to textarea
         const addLinebreaks = (anyString) => {
             return anyString.replaceAll("\n", "<br />\r\n");
@@ -245,27 +245,27 @@ addBtn.addEventListener("click", async (e) => {
         const inputServings = parseInt(document.getElementById("inputServings").value);
         const inputDescr = document.getElementById("inputDescr").value;
         const inputSteps = addLinebreaks($("#inputSteps").val());
-        
+
         // Get tag
         let tags = [];
-        if(document.getElementById("vegetarian").checked){
+        if (document.getElementById("vegetarian").checked) {
             tags.push("vegetarian");
-        } 
-        if(document.getElementById("vegan").checked){
+        }
+        if (document.getElementById("vegan").checked) {
             tags.push("vegan");
-        } 
-        if(document.getElementById("breakfast").checked){
+        }
+        if (document.getElementById("breakfast").checked) {
             tags.push("breakfast");
-        } 
-        if(document.getElementById("lunch").checked){
+        }
+        if (document.getElementById("lunch").checked) {
             tags.push("lunch");
-        } 
-        if(document.getElementById("dinner").checked){
+        }
+        if (document.getElementById("dinner").checked) {
             tags.push("dinner");
         }
 
         let complete_fields = (tags != [] && inputName != "" && inputTime != null && inputServings != null && inputDescr != "" && inputSteps != "")
-        if(complete_fields){
+        if (complete_fields) {
 
             const recipeData = {
                 recipeName: inputName,
@@ -303,13 +303,13 @@ addBtn.addEventListener("click", async (e) => {
             // TODO: Clear form
             modalBody.innerHTML = "<p>Receta guardada!</p>"
             modalBtn.removeAttribute("disabled");
-   
+
             document.getElementById("addForm").reset();
             document.getElementById("ingredientList").innerHTML = "";
 
         }
         else {
-        //missing fields
+            //missing fields
             modalBody.innerHTML = "<p>No has llenado todos los campos</p>"
             modalBtn.removeAttribute("disabled");
         }
@@ -339,23 +339,15 @@ async function editPlato(pId) {
     })
     .catch((error) => {
         alert(error.message);
+        return;
     });
-    
-    let id = pId.replace('edit-','');;
 
-    document.getElementById("btnBack").addEventListener('click', event => {
+    const docSnap = await getDoc(doc(db, "platos", pId));
+    const data = docSnap.data();
+
+    document.getElementById("btnBack").addEventListener('click', (e) => {
         editBtn.click();
     });
-    document.getElementById("title").innerHTML += "<span class='text-muted text-small'> "+id+"</span>";
-
-    const docRef = doc(db, "platos", id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-    }
+    document.getElementById("title").innerHTML += ` <span class='text-muted text-small'>${pId}</span>`;
 
 }
