@@ -204,6 +204,7 @@ addBtn.addEventListener("click", async (e) => {
 
         const recipeData = getForm();
         const valid = validate(recipeData)
+        console.log(recipeData);
         if (!valid) {
             modalBody.innerHTML = `<p>${ajv.errorsText(validate.errors)}</p>`
             modalBtn.removeAttribute("disabled");
@@ -525,23 +526,15 @@ function getForm() {
         tags.push("dinner");
     }
 
-    let complete_fields = (tags != [] && inputName != "" && inputTime != null && inputServings != null && inputDescr != "" && inputSteps != "")
-    if (complete_fields) {
-        let recipeData = {
-            recipeName: inputName,
-            time: inputTime,
-            servings: inputServings,
-            description: inputDescr,
-            price: inputPrecio,
-            steps: inputSteps,
-            ingredients: ingredientsList,
-            tags: tags
-        };
-        return recipeData;
-    }
-    else {
-        //missing fields
-        modalBody.innerHTML = "<p>No has llenado todos los campos</p>"
-        modalBtn.removeAttribute("disabled");
-    }
+    let recipeData = {
+        recipeName: inputName,
+        time: inputTime,
+        servings: inputServings,
+        description: inputDescr,
+        price: inputPrecio,
+        steps: inputSteps,
+        ingredients: ingredientsList,
+        tags: tags
+    };
+    return recipeData;
 }
