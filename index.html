@@ -56,7 +56,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="pages/links.html" class="nav-link">
+                <a href="pages/links.html" class="nav-link" data-bs-toggle="modal" data-bs-target="#ModalContacto">
                     <i class="fas fa-address-card"></i>
                     <span class="link-text">Contacto</span>
                 </a>
@@ -69,7 +69,42 @@
                 </a>
             </li>
         </ul>
-    </nav>
+
+    </nav>  
+            <!-- Modal Contacto -->
+            <div class="modal fade" id="ModalContacto" tabindex="-1" aria-labelledby="ModalContactoLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h3 class="modal-title" id="ModalContactoLabel">Contáctanos</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row justify-content-center pt-2" id="formas-contacto">
+                            <div class="col-lg-12 col-md-7 col-sm-8">
+                              <div class="row justify-content-center">
+                                <div class="col-3">
+                                  <a href="https://www.instagram.com/" target="blank"><i class="fab fa-instagram"></i></a>
+                                </div>
+                                <div class="col-3">
+                                  <a href="https://www.facebook.com/" target="blank"><i class="fab fa-facebook-square"></i></a>
+                                </div>
+                                <div class="col-3">
+                                  <a href="" target="blank"><i class="fab fa-whatsapp"></i></a>
+                                </div>
+                                <div class="col-3">
+                                  <a href="mailto:nutriplanner@gmail.com" target="blank"><i class="fas fa-envelope"></i></a>
+                                </div>
+                              </div>              
+                            </div>   
+                          </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+                </div>
+            </div>
 
     <main>
         <!----------------------------------- vv BANNER vv --------------------------------->

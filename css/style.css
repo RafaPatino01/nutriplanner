@@ -315,6 +315,22 @@ footer {
     max-width: 500px;
 }
 
+#ModalContacto h3 {
+  color: var(--text-tertiary);
+}
+
+#formas-contacto {
+  color:var(--text-secondary);
+  text-align: center;
+  font-size: 3rem;
+}
+
+#formas-contacto a {
+  color:var(--text-tertiary);
+  text-align: center;
+  font-size: 4rem;
+}
+
 /*------------------------------------Footer----------------------------------------*/
 footer {
     /* Arriba | Derecha | Abajo | Izquierda */
