@@ -9,10 +9,13 @@ import { collection, getDocs, getFirestore, onSnapshot, query, where } from "htt
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const navbar = document.getElementById("navbar-nav");
+
+// DOM references
 const signOutButton = document.getElementById("home_signout");
 const cardsDiv = document.getElementById("cards");
+const quickSearch = document.getElementById("quick-search");
 // navbar elements
+const navbar = document.getElementById("navbar-nav");
 const navbarCol = navbar.children;
 const signOutNav = navbarCol[5];
 const signInNav = navbarCol[1];
@@ -65,24 +68,54 @@ window.addEventListener("DOMContentLoaded", async () => {
     const unsub = onSnapshot(collection(db, "platos"), (querySnapshot) => {
         cardsDiv.innerHTML = '';
         querySnapshot.forEach((doc) => {
-            const data = doc.data()
-            // customize card to data
-            const newCard = platoElem.cloneNode(true);
-            newCard.querySelector(".card-title").innerText = data.recipeName;
-            newCard.querySelector(".card-text").innerText = data.description;
-            const viewBtn = newCard.querySelector(".btn-view");
-            viewBtn.dataset.id = doc.id;
-            // TODO: view event
-            // viewBtn.addEventListener("click" , (e) => {});
-            if (data.thumbnail) {
-                // if available image update
-                newCard.querySelector("img").src = data.thumbnail;
-            }
-            // finally, append card
-            cardsDiv.append(newCard);
+            createCard(doc);
+        });
+
+        quickSearch.querySelector("input").addEventListener("input", async (e) => {
+            const searchText = e.target.value;
+            const regex = new RegExp(searchText, 'gi');
+            cardsDiv.innerHTML = '';
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const rawData = JSON.stringify(data);
+                if (regex.test(rawData)) {
+                    // create card
+                    const card = createCard(doc);
+                    const titleText = card.querySelector(".card-title");
+                    const bodyText = card.querySelector(".card-text");
+                    titleText.innerHTML = HTMLhighlight(titleText.innerHTML, regex);
+                    bodyText.innerHTML = HTMLhighlight(bodyText.innerHTML, regex);
+                }
+            });
         });
     });
+
+    function createCard(doc) {
+        const data = doc.data();
+        // customize card to data
+        const newCard = platoElem.cloneNode(true);
+        newCard.querySelector(".card-title").innerText = data.recipeName;
+        newCard.querySelector(".card-text").innerText = data.description;
+        const viewBtn = newCard.querySelector(".btn-view");
+        viewBtn.dataset.id = doc.id;
+        // TODO: view event
+        // viewBtn.addEventListener("click" , (e) => {});
+        if (data.thumbnail) {
+            // if available image update
+            newCard.querySelector("img").src = data.thumbnail;
+        }
+        // finally, append card
+        cardsDiv.append(newCard);
+        return newCard;
+    }
 });
+
+function HTMLhighlight(text, regexp) {
+    let newText = text.replace(/(<mark>|<\/mark>)/gim, '');
+    if (String(regexp) == '/(?:)/gi') return newText;
+    newText = newText.replace(regexp, '<mark>$&</mark>');
+    return newText;
+}
 
 signOutButton.addEventListener("click", async (e) => {
     signOut(auth)
@@ -95,4 +128,9 @@ signOutButton.addEventListener("click", async (e) => {
         alert(error.message);
         console.error(error);
     })
+});
+
+// Scroll searchbar to top on focus
+quickSearch.querySelector("input").addEventListener("focus", async (e) => {
+    quickSearch.scrollIntoView();
 });
