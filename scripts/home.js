@@ -69,6 +69,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             // customize card to data
             const newCard = platoElem.cloneNode(true);
             newCard.querySelector(".card-title").innerText = data.recipeName;
+            newCard.querySelector(".card-text").innerText = data.description;
             const viewBtn = newCard.querySelector(".btn-view");
             viewBtn.dataset.id = doc.id;
             // TODO: view event
