@@ -4,7 +4,7 @@ import { app } from "./index.js";
 // firebase
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js";
 import { deleteDoc, addDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot, query, updateDoc, where, setDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-storage.js";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-storage.js";
 
 // json schema validator
 const Ajv = window.ajv2019;
@@ -51,7 +51,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // Reset loading modal
-modalBtn.addEventListener("click", event =>{
+modalBtn.addEventListener("click", event => {
     modalBody.innerHTML = `<div class="spinner-border" role="status">
     <span class="visually-hidden">Loading...</span>
   </div>`;
@@ -183,6 +183,15 @@ addBtn.addEventListener("click", async (e) => {
     .catch((error) => {
         alert(error.message);
     });
+    const inputImg = document.getElementById("inputImg");
+    const imgPreview = document.getElementById("imgPreview");
+    // preview image
+    inputImg.addEventListener("change", async (e) => {
+        const [imgData] = inputImg.files;
+        if (imgData) {
+            imgPreview.src = URL.createObjectURL(imgData);
+        }
+    });
 
     const ingredientBtn = document.getElementById("ingredientBtn");
     ingredientBtn.addEventListener("click", addIngredientFront);
@@ -190,10 +199,8 @@ addBtn.addEventListener("click", async (e) => {
     const btnReceta = document.getElementById("btnReceta");
     btnReceta.addEventListener("click", async () => {
         // call modal
-        
-        loadingModal.toggle();
 
-        const [inputImg] = document.getElementById("inputImg").files;
+        loadingModal.toggle();
 
         const recipeData = getForm();
         const valid = validate(recipeData)
@@ -208,14 +215,16 @@ addBtn.addEventListener("click", async (e) => {
         const docRef = await addDoc(collection(db, "platos"), recipeData);
 
         // send image data (if exists)
-        if (inputImg) {
-            const imgType = inputImg.type.split('/')[1];
+        const [imgData] = inputImg.files;
+        if (imgData) {
+            const imgType = imgData.type.split('/')[1];
             const fileName = docRef.id + "." + imgType;
             const storageRef = ref(storage, fileName);
-            await uploadBytes(storageRef, inputImg);
+            await uploadBytes(storageRef, imgData);
+            const downloadURL = await getDownloadURL(storageRef);
             // update doc entry
             await updateDoc(docRef, {
-                thumbnail: fileName
+                thumbnail: downloadURL
             });
         }
 
@@ -243,6 +252,15 @@ function showStats() {
 }
 
 async function editPlato(pId) {
+    // Assert data
+    const docRef = doc(db, "platos", pId);
+    const docSnap = await getDoc(docRef);
+    if (!(docSnap.exists())) {
+        alert("Document doesn't exist!");
+        editBtn.click();
+        return;
+    }
+
     await fetch("../common/edit_view.html")
     .then(response => response.text())
     .then((data) => {
@@ -251,6 +269,16 @@ async function editPlato(pId) {
     .catch((error) => {
         alert(error.message);
         return;
+    });
+    // image preview
+    const inputImg = document.getElementById("inputImg");
+    const imgPreview = document.getElementById("imgPreview");
+    // preview image
+    inputImg.addEventListener("change", async (e) => {
+        const [imgData] = inputImg.files;
+        if (imgData) {
+            imgPreview.src = URL.createObjectURL(imgData);
+        }
     });
 
     //ADD INGREDIENT funcionalidad
@@ -263,77 +291,76 @@ async function editPlato(pId) {
         editBtn.click();
     });
 
-    // FILL INPUTS
-    const docSnap = await getDoc(doc(db, "platos", pId));
-    if (docSnap.exists()) {
-        
-        const data = docSnap.data();
-        document.getElementById("inputName").value = data.recipeName;
-        document.getElementById("inputDescr").value = data.description;
-        document.getElementById("inputServings").value = data.servings;
-        document.getElementById("inputTime").value = data.time;
-        document.getElementById("inputPrecio").value = data.price;
-        document.getElementById("inputSteps").value = replaceAll(data.steps,"<br />",""); ;
+    // FILL INPUTS        
+    const data = docSnap.data();
+    document.getElementById("inputName").value = data.recipeName;
+    document.getElementById("inputDescr").value = data.description;
+    document.getElementById("inputServings").value = data.servings;
+    document.getElementById("inputTime").value = data.time;
+    document.getElementById("inputPrecio").value = data.price;
+    document.getElementById("inputSteps").value = replaceAll(data.steps, "<br />", "");
 
-        for(let i = 0; i < data.tags.length; i++){
-            switch(data.tags[i]){
-                case "vegetarian":
-                    document.getElementById("vegetarian").checked = true;
-                    break;
-                case "vegan":
-                    document.getElementById("vegan").checked = true;
-                    break;
-                case "breakfast":
-                    document.getElementById("breakfast").checked = true;
-                    break;
-                case "lunch":
-                    document.getElementById("lunch").checked = true;
-                    break;
-                case "dinner":
-                    document.getElementById("dinner").checked = true;
-                    break;
-            }
+    for (let i = 0; i < data.tags.length; i++) {
+        switch (data.tags[i]) {
+            case "vegetarian":
+                document.getElementById("vegetarian").checked = true;
+                break;
+            case "vegan":
+                document.getElementById("vegan").checked = true;
+                break;
+            case "breakfast":
+                document.getElementById("breakfast").checked = true;
+                break;
+            case "lunch":
+                document.getElementById("lunch").checked = true;
+                break;
+            case "dinner":
+                document.getElementById("dinner").checked = true;
+                break;
         }
+    }
 
-        for(let i = 0; i < data.ingredients.length; i++){
-            let ingredientName = data.ingredients[i].ingredientName;
-            let ingredientQty = data.ingredients[i].size.amount;
-            let ingredientUnit = data.ingredients[i].size.unit;
+    for (let i = 0; i < data.ingredients.length; i++) {
+        let ingredientName = data.ingredients[i].ingredientName;
+        let ingredientQty = data.ingredients[i].size.amount;
+        let ingredientUnit = data.ingredients[i].size.unit;
 
-            let ingredientDoc = parser.parseFromString(`
-            <div class="ingredient-entry row mb-1" data-ingredient-name=${ingredientName} data-ingredient-qty=${ingredientQty} data-ingredient-unit=${ingredientUnit}>
-                <div class="col-6 border bg-white rounded">
-                    ${ingredientName}
-                </div>
-                <div class="col-2 border bg-white rounded-end" >
-                    ${ingredientQty}
-                </div>
-                <div class="col-2 border bg-white rounded" >
-                    ${ingredientUnit}
-                </div>
-                <div class="col-2 text-center">
-                    <a class="btn-delete btn bg-gray" aria-label="Delete">
-                        <i class="bi bi-x-circle"></i>
-                    </a>
-                </div>
+        let ingredientDoc = parser.parseFromString(`
+        <div class="ingredient-entry row mb-1" data-ingredient-name="${ingredientName}" data-ingredient-qty="${ingredientQty}" data-ingredient-unit="${ingredientUnit}">
+            <div class="col-6 border bg-white rounded">
+                ${ingredientName}
             </div>
-            `,
+            <div class="col-2 border bg-white rounded-end" >
+                ${ingredientQty}
+            </div>
+            <div class="col-2 border bg-white rounded" >
+                ${ingredientUnit}
+            </div>
+            <div class="col-2 text-center">
+                <a class="btn-delete btn bg-gray" aria-label="Delete">
+                    <i class="bi bi-x-circle"></i>
+                </a>
+            </div>
+        </div>
+        `,
             "text/html");
-            // get only div
-            const ingredientElement = ingredientDoc.body.firstElementChild;
-            // delete self
-            ingredientElement.querySelector(".btn-delete")
+        // get only div
+        const ingredientElement = ingredientDoc.body.firstElementChild;
+        // delete self
+        ingredientElement.querySelector(".btn-delete")
             .addEventListener("click", () => {
                 ingredientElement.remove();
             });
-            // insert into doc
-            document.getElementById("ingredientList").append(ingredientElement);
-        }
-        
-    } else {
-        console.warn("No existe el documento");
+        // insert into doc
+        document.getElementById("ingredientList").append(ingredientElement);
     }
-    
+
+    // load image
+    const imgUrl = data.thumbnail;
+    if (imgUrl) {
+        imgPreview.src = imgUrl;
+    }
+
     // btn Update receta
     document.getElementById("btnReceta").addEventListener('click', async (e) => {
 
@@ -350,8 +377,28 @@ async function editPlato(pId) {
         }
 
         //Update doc
-        const docRef = doc(db, "platos", pId);
         await setDoc(docRef, recipeData, { merge: true });
+
+        // Update image
+        const [imgData] = inputImg.files;
+        if (imgData) {
+            // first delete existing
+            if (imgUrl) {
+                const delRef = ref(storage, imgUrl);
+                await deleteObject(delRef);
+            }
+            // upload new image
+            // regenerate filename in case of type change
+            const imgType = imgData.type.split('/')[1];
+            const fileName = pId + "." + imgType;
+            const storageRef = ref(storage, fileName);
+            await uploadBytes(storageRef, imgData);
+            const downloadURL = await getDownloadURL(storageRef);
+            // update doc entry
+            await updateDoc(docRef, {
+                thumbnail: downloadURL
+            });
+        }
 
         modalBody.innerHTML = "<p>Receta guardada!</p>"
         modalBtn.removeAttribute("disabled");
@@ -378,11 +425,11 @@ async function deletePlato(pId) {
 
 //Remove substring from string
 function replaceAll(str, find, replace) {
-    let escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    let escapedFind = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     return str.replace(new RegExp(escapedFind, 'g'), replace);
 }
 
-function addIngredientFront(){
+function addIngredientFront() {
     const ingredientName = document.getElementById("inputIngredientName").value;
     const ingredientQty = document.getElementById("inputIngredientQty").value;
     const ingredientUnit = document.getElementById("inputIngredientSelect").value;
@@ -421,12 +468,12 @@ function addIngredientFront(){
     document.getElementById("inputIngredientQty").value = "";
 }
 
-function getForm(){
+function getForm() {
     // Add br to textarea
     const addLinebreaks = (anyString) => {
         return anyString.replaceAll("\n", "<br />\r\n");
     };
-    
+
     // Get ingredients
     const ingredientes = Array.from(document.getElementsByClassName("ingredient-entry"));
     const ingredientsList = []; // [name, size]
@@ -487,4 +534,3 @@ function getForm(){
         modalBtn.removeAttribute("disabled");
     }
 }
-
