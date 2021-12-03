@@ -221,6 +221,10 @@ body {
     text-align: left;
 }
 
+.btn{
+  transition-duration: 0.4s;
+}
+
 .btn-primary {
     background-color: var(--bg-quinary);
     border-color: var(--text-secondary);
@@ -500,6 +504,54 @@ footer p {
 .switch-holder{
     background-color: rgb(243, 243, 243, 40%);
     width: 100%;
-    padding: 5 5 5 5;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 20px;
+
 }
 
+.btn-meal {
+    background-color: var(--bg-senary);
+    border-color: var(--text-quaternary);
+    border:none;
+    color: var(--text-senary);
+    font-size: large;
+}
+
+.btn-meal:hover {
+    background-color: var(--text-senary);
+    color: var(--text-primary);
+}
+
+.btn-meal:focus {
+    background-color: var(--bg-quaternary);
+    border-color: var(--text-quaternary);
+}
+
+.btn-check:visited {
+  background-color: #e4c495;
+  border-color: #684d5f;
+}
+
+.ingredients{
+  font-size: 20px;
+  
+  width: 100%;
+  padding: 20px;
+  
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.btn-sub-adv {
+  width: 80%;
+  height: 70px;
+  padding: 5px;
+}
+
+.col-text {
+  width: 100%;
+}

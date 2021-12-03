@@ -29,16 +29,16 @@
     <!-- Scripts -->
     
 <body>
-    <nav id=navbar>
+    <nav id="navbar">
         <ul id="navbar-nav">
             <li class="logo">
                 <a href="#" class="nav-link">
-                    <img src="../img/favicon.png" class="w-100" style="object-fit: cover;">
+                    <img src="img/favicon.png" class="w-100" style="object-fit: cover;">
                     <span class="link-text">Home</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="./login.html" class="nav-link">
+                <a href="pages/login.html" class="nav-link">
                     <i class="fas fa-sign-in-alt"></i>
                     <!-- <img src="img/favicon.png" class="w-100" style="object-fit: cover;"> -->
                     <span class="link-text">Sign in</span>
@@ -57,12 +57,12 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="./links.html" class="nav-link">
+                <a href="pages/links.html" class="nav-link">
                     <i class="fas fa-address-card"></i>
                     <span class="link-text">Contacto</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" hidden>
                 <a href="" class="nav-link">
                     <i class="fas fa-sign-out-alt"></i>
                     <button type="button" class="btn" id="home_signout" style="background-color: none;">Sign out</button>
@@ -87,69 +87,126 @@
             <div class="row justify-content-center pt-3 pb-4" id="adv-search">
                 <div class="col-md-4 p-5">
                     <div class="switch-holder">
+                        <div class="container d-flex justify-content-around">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <label class="form-check-label" for="vegetariano-check">Vegetariano</label>
+                                        <input class="form-check-input" type="checkbox" id="vegetariano-check">
+                                    </div>
+                                </div>
+                                <div class="w-100"></div>
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <label class="form-check-label" for="vegano-check">Vegano</label>
+                                        <input class="form-check-input" type="checkbox" id="vegano-check">
+                                    </div>
+                                </div>
+                                <div class="w-100"></div>
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <label class="form-check-label" for="lacteos-check">Lácteos</label>
+                                        <input class="form-check-input" type="checkbox" id="lacteos-check">
+                                    </div>
+                                </div>
+                                <div class="w-100"></div>
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <label class="form-check-label" for="mariscos-check">Mariscos</label>
+                                        <input class="form-check-input" type="checkbox" id="mariscos-check">    
+                                    </div>
+                                </div>
+
+                            </div>
                         
-                        <div class="form-check form-switch">
-                            <label class="form-check-label" for="vegetariano-check">Vegetariano</label>
-                            <input class="form-check-input" type="checkbox" id="vegetariano-check">
-                          </div>
-
-                        <div class="form-check form-switch">
-                            <label class="form-check-label" for="vegano-check">Vegano</label>
-                            <input class="form-check-input" type="checkbox" id="vegano-check">
                         </div>
-                    
-                        <div class="form-check form-switch">
-                            <label class="form-check-label" for="lacteos-check">Lácteos</label>
-                            <input class="form-check-input" type="checkbox" id="lacteos-check">
-                        </div>
-
-                        <div class="form-check form-switch">
-                            <label class="form-check-label" for="mariscos-check">Mariscos</label>
-                            <input class="form-check-input" type="checkbox" id="mariscos-check">    
-                        </div>
+                        
                     </div>
-
-                    <div class="meal-buttons">
+                    <!--------------------------------------------------------------------------------------->
+                    <div class="meal-buttons d-flex justify-content-around">
                         <input type="checkbox" class="btn-check" id="btn-desay" autocomplete="off">
-                        <label class="btn btn-primary" for="btn-check">Desayuno</label>
+                        <label class="btn btn-meal" for="btn-desay">Desayuno</label>
 
                         <input type="checkbox" class="btn-check" id="btn-comida" autocomplete="off">
-                        <label class="btn btn-primary" for="btn-check">Comida</label>
+                        <label class="btn btn-meal" for="btn-comida">Comida</label>
 
                         <input type="checkbox" class="btn-check" id="btn-cena" autocomplete="off">
-                        <label class="btn btn-primary" for="btn-check">Cena</label>
+                        <label class="btn btn-meal" for="btn-cena">Cena</label>
+
                     </div>
                 </div>
 
         <!----------------------------------- ^^ FILTERS ^^ --------------------------------->
        
-                <div class="col-md-5 p-5">
+                <div class="col-md-5 p-5 text-center">
                     <div class="ingredients">
-                        
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="text-ingre" placeholder="Ingredientes...">
+                        <div class="container  d-flex align-content-around justify-content-around">
+                            <div class="row">
+                                <div class="col pb-3" id="filtro-ingredientes">
+                                    <div class="col-sm-10 col-text">
+                                        <input type="text" class="form-control" id="text-ingre" placeholder="Ingredientes...">
+                                    </div>
+                                </div>
+                                <div class="w-100"></div>
+                                <div class="col pb-3" id="filtro-evitar">
+                                    <div class="col-sm-10 col-text">
+                                        <input type="text" class="form-control" id="text-evitar" placeholder="Evitar...">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="avoid">
-
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="text-evitar" placeholder="Evitar...">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                    <button type="submit" class="btn btn-primary btn-sub-adv btn-lg">Submit</button>
+                    
                 </div>
             </div>
-            
+        <!---------------------------------------------------a----------------------------->
         </div>
     </main>
 
     <footer>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam necessitatibus illo explicabo, ipsa dignissimos nemo quasi consequatur quae autem optio perspiciatis reiciendis exercitationem hic quisquam ex cum minus fugiat facere!</p>
-        <a href="pages/index_admin.html" class="btn btn-primary">Admin</a>
-        <a href="pages/login.html" class="btn btn-primary">Login</a>
-        <!-- <button type="button" class="btn btn-primary" id="home_signout">Signout</button> -->
+        <hr>
+        <div class="container">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <h6>Sobre Nutriplanner</h6>
+                <p class="text-justify">Nutri Planner</em> busca ayudar a llevar dietas más saludables y balanceadas para evitar enfermedades provocadas por
+                    una mala alimentación. Está dirigida principalmente a jóvenes universitarios foráneos que pueden llegar a
+                    menospreciar los buenos hábitos de alimentación, les resulta más fácil comprar comida procesada ya preparada o simplemente no
+                    están conscientes de que la comida que estás consumiendo puede ser muy dañina.</p>
+              </div>
+    
+              <div class="col-xs-6 col-md-3 text-center">
+
+              </div>
+    
+              <div class="col-xs-6 col-md-3">
+                <h6>Secciones</h6>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="pages/login.html">Sign in</a></li>
+                    <li><a href="#">Planificador</a></li>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8 col-sm-6 col-xs-12 my-auto">
+                <p id="copyright-text">Copyright &copy; 2021 All Rights Reserved by Nutriplanner.</p>    
+              </div>
+    
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <ul class="social-icons">
+                  <li><a class="instagram" href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                  <li><a class="github" href="https://github.com/RafaPatino01/nutriplanner" target="_blank"><i class="fab fa-github"></i></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
     </footer>
 
     
