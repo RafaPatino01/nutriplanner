@@ -105,16 +105,18 @@ window.addEventListener("DOMContentLoaded", async () => {
             recipeModal.querySelector("#viewRecipeModalLabel").innerHTML = data.recipeName;
             recipeModal.querySelector("#recipeModalDescription").innerHTML = data.description;
             const modalLeft = recipeModal.querySelector("#recipeModalLeft");
-            modalLeft.innerHTML = `
+            let ingredientHTML = `
             <h6>Tiempo: </h6> <p>${data.time} min</p>
             <h6>Porciones: </h6> <p>${data.servings}</p>
             <h6>Ingredientes: </h6>
-            <p>`;
-            data.ingredients.forEach((ingredient, idx) => {
-                modalLeft.innerHTML += `
-                ${idx+1}. ${ingredient.ingredientName}, ${ingredient.size.amount} ${ingredient.size.unit} <br />`;
+            <ul>`;
+
+            data.ingredients.forEach((ingredient) => {
+                ingredientHTML += `
+                <li> ${ingredient.ingredientName}, ${ingredient.size.amount} ${ingredient.size.unit} </li>`;
             });
-            modalLeft.innerHTML += '</p>';
+            ingredientHTML += '</ul>';
+            modalLeft.innerHTML = ingredientHTML;
 
             recipeModal.querySelector("#recipeModalInstructions").innerHTML = data.steps;
             recipeModal.querySelector("#recipeModalPrice").innerHTML = `\$${data.price}`;
