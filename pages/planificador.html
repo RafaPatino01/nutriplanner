@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--    Document Title-->
+    <!-- =============================================-->
+    <title>Nutri Planner | Planificador Semanal</title>
+    <meta name="description" content="Nutri Planner es una app que ayuda a mejorar la calidad alimenticia de la población mexicana a través de la tecnología.">
+    <meta name="keywords" content="Nutri Planner, Nutricion, Recetas">
+    
+    <!--    Favicons-->
+    <!--    =============================================-->
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/favicon.png">
+    <link rel="icon" type="image/png" href="../img/favicon.png" />
+
+    <!--    Stylesheets-->
+    <!--    =============================================-->
+    <script src="https://kit.fontawesome.com/8e9c2ddd8d.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/planificador.css">
+
+    <!-- Scripts -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script type="module" src="../scripts/index.js"></script>
+    <script type="module" src="../scripts/planificador.js"></script>
+</head>
+<body>
+    <nav id="navbar">
+        <ul id="navbar-nav">
+            <li class="logo">
+                <a href="../index.html" class="nav-link">
+                    <img src="../img/favicon.png" class="w-100" style="object-fit: cover;">
+                    <span class="link-text">Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="login.html" class="nav-link">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <!-- <img src="img/favicon.png" class="w-100" style="object-fit: cover;"> -->
+                    <span class="link-text">Sign in</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="planificador.html" class="nav-link">
+                    <i class="fas fa-calendar-week"></i>
+                    <span class="link-text">Planificador</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="link-text">Quiénes somos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-address-card"></i>
+                    <span class="link-text">Contacto</span>
+                </a>
+            </li>
+            <li class="nav-item" hidden>
+                <a href="" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <button type="button" class="btn" id="home_signout" style="background-color: none;">Sign out</button>
+                    <!-- <span class="link-text"></span> -->
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <div class="container pt-5">
+            <h1 class="text-white">PLANIFICADOR SEMANAL</h1>
+            <p class="text-muted col-sm-5">El planificador semanal es una herramienta de nutriplanner que te permitirá escoger los platillos que más te gustan en la semana, produciendo una lista de super y un precio aproximado.</p>
+            <br><br>
+            <a class="start-btn" href="#lunes">
+                <svg class="icon-arrow before">
+                    <use xlink:href="#arrow"></use>
+                </svg>
+                <span class="label">COMENZAR</span>
+                <svg class="icon-arrow after">
+                    <use xlink:href="#arrow"></use>
+                </svg>
+            </a>
+            
+            <svg style="display: none;">
+              <defs>
+                <symbol id="arrow" viewBox="0 0 35 15">
+                  <title>Arrow</title>
+                  <path d="M27.172 5L25 2.828 27.828 0 34.9 7.071l-7.07 7.071L25 11.314 27.314 9H0V5h27.172z "/>
+                </symbol>
+              </defs>
+            </svg>
+
+            <div id="lunes" class="day-section p-5">
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-white display-1">LUNES</h1>
+                    </div>
+                    <div class="col-6 text-end pt-4">
+                        <button class="btn btn-lg btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-dice-5" viewBox="0 0 16 16">
+                            <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3H3z"/>
+                            <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                          </svg> &#8203;Mostrar nuevos</button>
+                    </div>
+                </div>
+
+                <div class="row mb-4" id="lunes-platos"> </div>
+                
+            </div>
+            <div id="martes" class="day-section p-5">
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-white display-1">MARTES</h1>
+                    </div>
+                    <div class="col-6 text-end pt-4">
+                        <button class="btn btn-lg btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-dice-5" viewBox="0 0 16 16">
+                            <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3H3z"/>
+                            <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                          </svg> &#8203;Mostrar nuevos</button>
+                    </div>
+                </div>
+
+                <div class="row mb-4" id="martes-platos"> </div>
+            </div>
+            <div id="miercoles" class="day-section p-5">
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-white display-1">MIÉRCOLES</h1>
+                    </div>
+                    <div class="col-6 text-end pt-4">
+                        <button class="btn btn-lg btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-dice-5" viewBox="0 0 16 16">
+                            <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3H3z"/>
+                            <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                          </svg> &#8203;Mostrar nuevos</button>
+                    </div>
+                </div>
+
+                <div class="row mb-4" id="miercoles-platos"> </div>
+            </div>
+            <div id="jueves" class="day-section p-5">
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-white display-1">JUEVES</h1>
+                    </div>
+                    <div class="col-6 text-end pt-4">
+                        <button class="btn btn-lg btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-dice-5" viewBox="0 0 16 16">
+                            <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3H3z"/>
+                            <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                          </svg> &#8203;Mostrar nuevos</button>
+                    </div>
+                </div>
+
+                <div class="row mb-4" id="jueves-platos"> </div>
+            </div>
+            <div id="viernes" class="day-section p-5">
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-white display-1">VIERNES</h1>
+                    </div>
+                    <div class="col-6 text-end pt-4">
+                        <button class="btn btn-lg btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-dice-5" viewBox="0 0 16 16">
+                            <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3H3z"/>
+                            <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                          </svg> &#8203;Mostrar nuevos</button>
+                    </div>
+                </div>
+
+                <div class="row mb-4" id="viernes-platos"> </div>
+            </div>
+
+            <div id="results" class="day-section p-5">
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-white display-1">RESULTADOS</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    
+                </div>
+                <div class="row bg-light" style="border-radius: 25px;">
+                    <div class="col-md-4 border-end p-5" id="res-platillos">
+                        <h2>Platillos escogidos:</h2>
+                        <hr>
+                        
+                    </div>
+                    <div class="col-md-4 border-end p-5">
+                        <h2>Lista de super</h2>
+                        <hr>
+                        <ol class="list-group list-group-numbered" id="res-super" style="overflow: auto; height: 400px;">
+
+                        </ol>
+                    </div>
+                    <div class="col-md-4 p-5">
+                        <h2>Precio aproximado</h2>
+                        <hr>
+                        <h1 id="res-precio">$100</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="day-section p-5">
+                <br>
+            </div>
+
+        </div>
+    </main>
+    
+</body>
+</html>
