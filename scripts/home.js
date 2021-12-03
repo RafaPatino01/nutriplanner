@@ -14,6 +14,7 @@ const db = getFirestore(app);
 const signOutButton = document.getElementById("home_signout");
 const cardsDiv = document.getElementById("cards");
 const quickSearch = document.getElementById("quick-search");
+const recipeModal = document.getElementById("recipeModal");
 // navbar elements
 const navbar = document.getElementById("navbar-nav");
 const navbarCol = navbar.children;
@@ -98,8 +99,30 @@ window.addEventListener("DOMContentLoaded", async () => {
         newCard.querySelector(".card-text").innerText = data.description;
         const viewBtn = newCard.querySelector(".btn-view");
         viewBtn.dataset.id = doc.id;
-        // TODO: view event
-        // viewBtn.addEventListener("click" , (e) => {});
+        
+        viewBtn.addEventListener("click" , (e) => {
+            // Set modal data
+            recipeModal.querySelector("#viewRecipeModalLabel").innerHTML = data.recipeName;
+            recipeModal.querySelector("#recipeModalDescription").innerHTML = data.description;
+            const modalLeft = recipeModal.querySelector("#recipeModalLeft");
+            modalLeft.innerHTML = `
+            <h6>Tiempo: </h6> <p>${data.time} min</p>
+            <h6>Porciones: </h6> <p>${data.servings}</p>
+            <h6>Ingredientes: </h6>
+            <p>`;
+            data.ingredients.forEach((ingredient, idx) => {
+                modalLeft.innerHTML += `
+                ${idx+1}. ${ingredient.ingredientName}, ${ingredient.size.amount} ${ingredient.size.unit} <br />`;
+            });
+            modalLeft.innerHTML += '</p>';
+
+            recipeModal.querySelector("#recipeModalInstructions").innerHTML = data.steps;
+            recipeModal.querySelector("#recipeModalPrice").innerHTML = `\$${data.price}`;
+
+            if (data.thumbnail) {
+                recipeModal.querySelector("img").src = data.thumbnail;
+            }
+        });
         if (data.thumbnail) {
             // if available image update
             newCard.querySelector("img").src = data.thumbnail;
