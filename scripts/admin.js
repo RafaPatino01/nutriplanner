@@ -3,7 +3,7 @@
 import { app } from "./index.js";
 // firebase
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js";
-import { addDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot, query, updateDoc, where, setDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
+import { deleteDoc, addDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot, query, updateDoc, where, setDoc } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-storage.js";
 
 // json schema validator
@@ -141,7 +141,7 @@ editBtn.addEventListener("click", async (e) => {
                 </div>
                 `
             });
-
+            //edit plato
             document.querySelectorAll(".btn-edit").forEach((btn) => {
                 btn.addEventListener("click", async (e) => {
                     unsub();
@@ -150,6 +150,12 @@ editBtn.addEventListener("click", async (e) => {
             });
 
             // delete plato
+            document.querySelectorAll(".btn-delete").forEach((btn) => {
+                btn.addEventListener("click", async (e) => {
+                    unsub();
+                    await deletePlato(e.target.dataset.id);
+                });
+            });
         });
     });
 
@@ -354,6 +360,22 @@ async function editPlato(pId) {
 
 }
 
+async function deletePlato(pId) {
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    //Show modal
+    loadingModal.toggle();
+    await deleteDoc(doc(db, "platos", pId));
+    modalBody.innerHTML = "<p style='background-color=rgb(252, 101, 101)'>Receta eliminada!</p>"
+    modalBtn.removeAttribute("disabled");
+
+    await delay(3000); //wait
+    location.reload();
+}
+
+
+
+
 //Remove substring from string
 function replaceAll(str, find, replace) {
     let escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -465,3 +487,4 @@ function getForm(){
         modalBtn.removeAttribute("disabled");
     }
 }
+
